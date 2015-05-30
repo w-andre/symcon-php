@@ -69,14 +69,14 @@
 		public function RequestAction($ident, $value)
 		{
 			switch($ident) {
-				case "Load":
-					$switchState = GetValueBoolean($this->GetIDForIdent("LoadSaveSwitch"));
+				case "LightScene":
+					$switchState = GetValueBoolean($this->GetIDForIdent("LoadSaveLSSwitch"));
 					if ($switchState === true)
 						$this->Save($value);
 					else
 						$this->Load($value);
 					break;
-				case "LoadSaveSwitch":
+				case "LoadSaveLSSwitch":
 					SetValueBoolean($this->GetIDForIdent($ident), $value);
 					break;
 				default:
