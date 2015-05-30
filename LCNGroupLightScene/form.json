@@ -1,0 +1,13 @@
+{
+	"elements":
+	[
+		{ "name": "LCNGroupNumber", "type": "ValidationTextBox", "caption": "LCN Group Number" },
+		{ "name": "Ramp", "type": "ValidationTextBox", "caption": "Ramp" },
+		{ "name": "LCNClientSocketId", "type": "ValidationTextBox", "caption": "LCN Client Socket ID" }
+	],
+	"actions":
+	[
+		{ "type": "Button", "label": "Load", "onClick": "LCN_GRPLS_Load($id);" },
+		{ "type": "Button", "label": "Save", "onClick": "LCN_GRPLS_Save($id);" }
+	]	
+}
