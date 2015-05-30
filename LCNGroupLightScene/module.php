@@ -9,6 +9,8 @@
 			//These lines are parsed on Symcon Startup or Instance creation
 			//You cannot use variables here. Just static values.
 			$this->RegisterPropertyString("LCNGroupNumber", "");
+			$this->RegisterPropertyString("Ramp", "007");
+			$this->RegisterPropertyString("LCNClientSocketId", "");
 		}
 		public function ApplyChanges()
 		{
@@ -28,6 +30,7 @@
 				Array(9, "Lichtszene 10", "", -1)
 			),
 			1 /* Integer */);
+			
 			$this->RegisterProfileEx("LoadSaveLSSwitch.LCN", "", "", "", Array(
 				Array(0, "Nein", "", 16711680),
 				Array(1, "Ja", "", 65280),
