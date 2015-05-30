@@ -17,7 +17,7 @@
 			//Never delete this line!
 			parent::ApplyChanges();
 			
-			$this->RegisterProfileEx("LightScene.LCN", "Bulb", "", "", Array(
+			$this->RegisterProfileEx("LightScene.LCN", "Bulb", "", "", 1 /* Integer */, Array(
 				Array(0, "Lichtszene 1", "", -1),
 				Array(1, "Lichtszene 2", "", -1),
 				Array(2, "Lichtszene 3", "", -1),
@@ -28,14 +28,12 @@
 				Array(7, "Lichtszene 8", "", -1),
 				Array(8, "Lichtszene 9", "", -1),
 				Array(9, "Lichtszene 10", "", -1)
-			),
-			1 /* Integer */);
+			));
 			
-			$this->RegisterProfileEx("LoadSaveLSSwitch.LCN", "", "", "", Array(
+			$this->RegisterProfileEx("LoadSaveLSSwitch.LCN", "", "", "", 0 /* Boolean */, Array(
 				Array(0, "Nein", "", 16711680),
 				Array(1, "Ja", "", 65280),
-			),
-			0 /* Boolean */);
+			));
 			
 			$this->RegisterVariableInteger("LightScene", "Lichtszene", "LightScene.LCN");
 			$this->EnableAction("LightScene");
