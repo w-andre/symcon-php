@@ -101,9 +101,9 @@
 			}
 		}
 		
-		protected function RegisterProfileEx($name, $Icon, $prefix, $suffix, $profileType, $associations) {
+		protected function RegisterProfileEx($name, $icon, $prefix, $suffix, $profileType, $associations) {
 		
-			$result = $this->RegisterProfileInteger($name, $Icon, $prefix, $suffix, $associations[0][0], $associations[sizeof($associations)-1][0], 0, $profileType);
+			$result = $this->RegisterProfile($name, $icon, $prefix, $suffix, $associations[0][0], $associations[sizeof($associations)-1][0], 0, $profileType);
 			if (!result) return; // do not set associations if the profile did already exist
 			
 			foreach($associations as $association) {
