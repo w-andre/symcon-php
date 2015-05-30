@@ -104,7 +104,7 @@
 		protected function RegisterProfileEx($name, $icon, $prefix, $suffix, $profileType, $associations) {
 		
 			$result = $this->RegisterProfile($name, $icon, $prefix, $suffix, $associations[0][0], $associations[sizeof($associations)-1][0], 0, $profileType);
-			if (!result) return; // do not set associations if the profile did already exist
+			if (!$result) return; // do not set associations if the profile did already exist
 			
 			foreach($associations as $association) {
 				IPS_SetVariableProfileAssociation($name, $association[0], $association[1], $association[2], $association[3]);
