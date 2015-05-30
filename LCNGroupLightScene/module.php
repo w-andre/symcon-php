@@ -62,16 +62,17 @@
 			. str_pad(strval($sceneNo), 3, "0", STR_PAD_LEFT)		// light scene 00 - 09, 15: take value from counter
 			. $rr													// ramp, 007 --> 3s or Relais, e.g. 10111011
 			. chr(10);
-
-			CSCK_SendText($this->ReadPropertyString("LCNClientSocketId"), $pck);
+			
+			$id = intval($this->ReadPropertyString("LCNClientSocketId"));
+			CSCK_SendText($id, $pck);
 		}
 				
 		public function RequestAction($ident, $value)
 		{
 			switch($ident) {
 				case "LightScene":
-					$switchState = GetValueBoolean($this->GetIDForIdent("LoadSaveLSSwitch"));
-					if ($switchState === true)
+					$saveSwitchState = GetValueBoolean($this->GetIDForIdent("LoadSaveLSSwitch"));
+					if ($saveSwitchState === true)
 						$this->Save($value);
 					else
 						$this->Load($value);
