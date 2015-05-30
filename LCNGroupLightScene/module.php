@@ -43,11 +43,11 @@
 		}
 		
 		public function Load($sceneNo){
-			LoadOrSaveLightScene("G", $this->ReadPropertyString("LCNGroupNumber"), $sceneNo, "7", "007", "A");
+			$this->LoadOrSaveLightScene("G", $this->ReadPropertyString("LCNGroupNumber"), $sceneNo, "7", "007", "A");
 		}
 		
 		public function Save($sceneNo){
-			LoadOrSaveLightScene("G", $this->ReadPropertyString("LCNGroupNumber"), $sceneNo, "7", "007", "S");
+			$this->LoadOrSaveLightScene("G", $this->ReadPropertyString("LCNGroupNumber"), $sceneNo, "7", "007", "S");
 		}
 		
 		private function LoadOrSaveLightScene($targetType, $targetId, $sceneNo, $channels, $rr, $loadOrSave) {
