@@ -51,8 +51,10 @@
 				Array(0, "Nein", "", 16711680),
 				Array(1, "Ja", "", 65280),
 			));
-			
-			
+		}
+		
+		public function UpdateInstance()
+		{
 			if ($this->ReadPropertyBoolean("ShowOutput1") === true)
 			{
 				$this->RegisterVariableBoolean("StatusOutput1", "Status Output 1", "~Switch");
@@ -86,8 +88,6 @@
 				$this->RegisterVariableBoolean("LoadSaveLSSwitch", "Lichtszene speichern", "LoadSaveLSSwitch.LCN");
 				$this->EnableAction("LoadSaveLSSwitch");
 			}
-					
-			
 		}
 		
 		public function LoadLightScene($sceneNo)

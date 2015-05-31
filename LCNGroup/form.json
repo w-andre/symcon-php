@@ -15,13 +15,14 @@
 		{ "name": "ShowRelay8", "type": "CheckBox", "caption": "Show Relay 8" },
 		{ "name": "ShowLightScene", "type": "CheckBox", "caption": "Show Light Scene" },
 		{ "name": "Ramp", "type": "NumberSpinner", "caption": "Ramp (in seconds)" },
-		{ "name": "LCNClientSocketId", "type": "ValidationTextBox", "caption": "LCN Client Socket ID" }
+		{ "name": "LCNClientSocketId", "type": "ValidationTextBox", "caption": "LCN Client Socket Instance ID" }
+		{ "name": "UpdateInstanceButton", "type": "Button", "label": "Update instance", "onClick": "LCN_Group_UpdateInstance($id);" }
 	],
 	"actions":
 	[
-		{ "type": "HorizontalSlider", "name": "output1", "minimum": 0, "maximum": 100, "onChange": "LCN_Group_SetIntensity($id, 1, $output1);" },
-		{ "type": "HorizontalSlider", "name": "output2", "minimum": 0, "maximum": 100, "onChange": "LCN_Group_SetIntensity($id, 2, $output2);" },
-		{ "type": "HorizontalSlider", "name": "output3", "minimum": 0, "maximum": 100, "onChange": "LCN_Group_SetIntensity($id, 3, $output3);" },
+		{ "type": "HorizontalSlider", "name": "output1", "label": "Intensity Output 1", "minimum": 0, "maximum": 100, "onChange": "LCN_Group_SetIntensity($id, 1, $output1);" },
+		{ "type": "HorizontalSlider", "name": "output2", "label": "Intensity Output 2", "minimum": 0, "maximum": 100, "onChange": "LCN_Group_SetIntensity($id, 2, $output2);" },
+		{ "type": "HorizontalSlider", "name": "output3", "label": "Intensity Output 3", "minimum": 0, "maximum": 100, "onChange": "LCN_Group_SetIntensity($id, 3, $output3);" },
 		{ "type": "Button", "label": "Load Light Scene 1", "onClick": "LCN_Group_LoadLightScene($id, 1);" },
 		{ "type": "Button", "label": "Save Light Scene 2", "onClick": "LCN_Group_SaveLightScene($id, 1);" }
 	]	
