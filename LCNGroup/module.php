@@ -107,7 +107,7 @@
 		
 		private function GetRamp()
 		{
-			$seconds = $this->RegisterPropertyInteger("Ramp");
+			$seconds = $this->ReadPropertyInteger("Ramp");
 			$rr = $this->GetRampFromSeconds($seconds);
 			return $rr;
 		}
