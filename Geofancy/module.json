@@ -1,0 +1,14 @@
+{
+	"id": "{E02621B3-1CA7-4E3B-AA79-340BF39ECE5C}",
+	"name": "Geofancy",
+	"type": 0,
+	"vendor": "andre",
+	"aliases": 
+	[
+		"Geofancy"
+	],
+	"parentRequirements": [],
+	"childRequirements": [],
+	"implemented": [],
+	"prefix": "Geofancy"
+}
