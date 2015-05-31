@@ -9,8 +9,8 @@
 			//These lines are parsed on Symcon Startup or Instance creation
 			//You cannot use variables here. Just static values.
 			$this->RegisterPropertyInteger("GroupNumber", 0);
-			$this->RegisterPropertyInteger("Unit", -1);
-			$this->RegisterPropertyInteger("PreviousUnit", 0);
+			$this->RegisterPropertyInteger("Unit", 0);
+			$this->RegisterPropertyInteger("PreviousUnit", -1);
 			$this->RegisterPropertyInteger("Channel", 0);
 			$this->RegisterPropertyInteger("Ramp", 3);
 			$this->RegisterPropertyInteger("LCNClientSocketId", 0);
