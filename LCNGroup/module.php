@@ -9,7 +9,8 @@
 			//These lines are parsed on Symcon Startup or Instance creation
 			//You cannot use variables here. Just static values.
 			$this->RegisterPropertyInteger("GroupNumber", 0);
-			$this->RegisterPropertyInteger("Unit", 0);						
+			$this->RegisterPropertyInteger("Unit", -1);
+			$this->RegisterPropertyInteger("PreviousUnit", 0);
 			$this->RegisterPropertyInteger("Channel", 0);
 			$this->RegisterPropertyInteger("Ramp", 3);
 			$this->RegisterPropertyInteger("LCNClientSocketId", 0);
@@ -17,17 +18,9 @@
 		
 		public function ApplyChanges()
 		{
-			$oldUnit = $this->ReadPropertyInteger("Unit");
-			IPS_LogMessage("LCNGroup", "old unit: " . $oldUnit);
-			
-			
 			//Never delete this line!
 			parent::ApplyChanges();
-			
-			$newUnit = $this->ReadPropertyInteger("Unit");
-			IPS_LogMessage("LCNGroup", "new unit: " . $newUnit);
-			return;
-			
+					
 			$this->RegisterProfileEx("LightScene.LCN", "Bulb", "", "", 1 /* Integer */, Array(
 				Array(0, "Light Scene 1", "", -1),
 				Array(1, "Light Scene 2", "", -1),
@@ -46,29 +39,49 @@
 				Array(1, "Yes", "", 65280),
 			));
 			
+			$prevUnit = $this->ReadPropertyInteger("PreviousUnit");
 			$unit = $this->ReadPropertyInteger("Unit");
 			$keepOutput = $unit == 0;
 			$keepRelay = $unit == 2;
 			$keepLightScene = $unit == 4;
 			
-			$this->MaintainVariable("Status", "Status", 0, "~Switch", 0, $keepOutput);
-			$this->MaintainVariable("Intensity", "Intensity", 1, "~Intensity.100", 1, $keepOutput);
-			if ($keepOutput)
+			
+			switch ($prevUnit)
 			{
-				$this->EnableAction("Status");
-				$this->EnableAction("Intensity");
+				case 0: // output
+					$this->UnregisterVariable("Status");
+					$this->UnregisterVariable("Intensity");
+					break;
+				case 2: // relay
+					$this->UnregisterVariable("Status");
+					break;
+				case 4; // light scene
+					$this->UnregisterVariable("LightScene");
+					$this->UnregisterVariable("LoadSaveLSSwitch");					
+					break;
 			}
-	
-			$this->MaintainVariable("Status", "Status", 0, "~Switch", 0, $keepRelay);
-			if ($keepRelay) $this->EnableAction("Status");
-	
-			$this->MaintainVariable("LightScene", "Light Scene", 1, "LightScene.LCN", 0, $keepLightScene);
-			$this->MaintainVariable("LoadSaveLSSwitch", "Save Light Scene", 0, "LoadSaveLSSwitch.LCN", 1, $keepLightScene);
-			if ($keepLightScene)
+			
+			switch ($unit)
 			{
-				$this->EnableAction("LightScene");
-				$this->EnableAction("LoadSaveLSSwitch");
+				case 0: // output
+					$this->RegisterVariableBoolean("Status", "Status", "~Switch", 10);
+					$this->RegisterVariableInteger("Intensity", "Intensity", "~Intensity.100", 20);
+					$this->EnableAction("Status");
+					$this->EnableAction("Intensity");
+					break;
+				case 2: // relay
+					$this->RegisterVariableBoolean("Status", "Status", "~Switch", 10);
+					$this->EnableAction("Status");
+					break;
+				case 4; // light scene
+					$this->RegisterVariableInteger("LightScene", "Light Scene", "LightScene.LCN", 10);
+					$this->RegisterVariableBoolean("LoadSaveLSSwitch", "Save Light Scene", "LoadSaveLSSwitch.LCN", 20);	
+					$this->EnableAction("LightScene");
+					$this->EnableAction("LoadSaveLSSwitch");					
+					break;
 			}
+			
+			$this->Properties["PreviousUnit"] = $unit;
 		}
 		
 		public function LoadLightScene($sceneNo)
