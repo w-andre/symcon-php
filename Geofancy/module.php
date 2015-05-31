@@ -17,7 +17,7 @@
 			//Never delete this line!
 			parent::ApplyChanges();
 			
-			$sid = $this->RegisterScript("Hook", "Hook", "<? //Do not delete or modify.\ninclude(IPS_GetKernelDirEx().\"scripts/__ipsmodule.inc.php\");\ninclude(\"../modules/php-symcon/Geofancy/module.php\");\n(new Geofancy(".$this->InstanceID."))->ProcessHookData();");
+			$sid = $this->RegisterScript("Hook", "Hook", "<? //Do not delete or modify.\ninclude(IPS_GetKernelDirEx().\"scripts/__ipsmodule.inc.php\");\ninclude(\"../modules/symcon-php/Geofancy/module.php\");\n(new Geofancy(".$this->InstanceID."))->ProcessHookData();");
 			$this->RegisterHook("/hook/geofancy", $sid);
 		}
 		
