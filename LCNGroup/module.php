@@ -78,7 +78,7 @@
 				}				
 			} else {
 				$vid = @IPS_GetObjectIDByIdent($ident, $this->InstanceID);
-				IPS_LogMessage("LCNGroup", $vid);
+				IPS_LogMessage("LCNGroup", "ID: " . strval($vid));
 				if($vid !== false)
 					return;
 				if(!IPS_VariableExists($vid))
