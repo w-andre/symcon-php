@@ -42,19 +42,13 @@
 			$keepOutput = $unit == 0;
 			$keepRelay = $unit == 2;
 			$keepLightScene = $unit == 4;
+						
+			$this->CustomMaintainVariable("Status", "Status", 0, "~Switch", 10, $keepOutput || $keepRelay);
+			if ($keepRelay || $keepOutput) $this->EnableAction("Status");
 			
-			
-			$this->CustomMaintainVariable("Status", "Status", 0, "~Switch", 10, $keepOutput);
 			$this->CustomMaintainVariable("Intensity", "Intensity", 1, "~Intensity.100", 20, $keepOutput);
-			if ($keepOutput)
-			{
-				$this->EnableAction("Status");
-				$this->EnableAction("Intensity");
-			}
-	
-			$this->CustomMaintainVariable("Status", "Status", 0, "~Switch", 10, $keepRelay);
-			if ($keepRelay) $this->EnableAction("Status");
-	
+			if ($keepOutput) $this->EnableAction("Intensity");
+				
 			$this->CustomMaintainVariable("LightScene", "Light Scene", 1, "LightScene.LCN", 10, $keepLightScene);
 			$this->CustomMaintainVariable("LoadSaveLSSwitch", "Save Light Scene", 0, "LoadSaveLSSwitch.LCN", 20, $keepLightScene);
 			if ($keepLightScene)
@@ -62,7 +56,6 @@
 				$this->EnableAction("LightScene");
 				$this->EnableAction("LoadSaveLSSwitch");
 			}
-			
 		}
 				
 		private function CustomMaintainVariable($ident, $name, $type, $profile, $position, $keep) {
@@ -157,44 +150,58 @@
 		
 		public function SetIntensity($intensity)
 		{
-			$groupNo = $this->ReadPropertyInteger("GroupNumber");
-			$outputNo = $this->ReadPropertyInteger("Channel");
-			
-			$pck = ">"
-			. "G"		                                  			// G=group, M=module
-			. "000"													// segment
-			. str_pad(strval($groupNo), 3, "0", STR_PAD_LEFT)		// module or group number
-			. "."
-			. "A"													// output
-			. $outputNo												// output number
-			. "DI"													// output intensity
-			. str_pad(strval($intensity), 3, "0", STR_PAD_LEFT)		// output intensity value 000...100
-			. strval($rr)											// ramp, 007 --> 3s
-			. chr(10);
-			
-			$id = $this->ReadPropertyInteger("LCNClientSocketId");
-			CSCK_SendText($id, $pck);
+			try
+			{
+				$groupNo = $this->ReadPropertyInteger("GroupNumber");
+				$outputNo = $this->ReadPropertyInteger("Channel");
+				
+				$pck = ">"
+				. "G"		                                  			// G=group, M=module
+				. "000"													// segment
+				. str_pad(strval($groupNo), 3, "0", STR_PAD_LEFT)		// module or group number
+				. "."
+				. "A"													// output
+				. $outputNo												// output number
+				. "DI"													// output intensity
+				. str_pad(strval($intensity), 3, "0", STR_PAD_LEFT)		// output intensity value 000...100
+				. strval($rr)											// ramp, 007 --> 3s
+				. chr(10);
+				
+				$id = $this->ReadPropertyInteger("LCNClientSocketId");
+				CSCK_SendText($id, $pck);
+			} 
+			catch(Exception $e)
+			{
+				IPS_LogMessage("LCNGroup", "Exception: " . $e->getMessage());
+			}
 		}
 		
 		public function SwitchRelay($switchOn)
 		{
-			$groupNo = $this->ReadPropertyInteger("GroupNumber");
-			$relayNo = $this->ReadPropertyInteger("Channel");
-			$relayState = $switchOn === true ? "1" : "0";
-			
-			$pck = ">"
-			. "G"		                                  			// G=group, M=module
-			. "000"													// segment
-			. str_pad(strval($groupNo), 3, "0", STR_PAD_LEFT)		// module or group number
-			. "."
-			. "R8"													// relay
-			. substr("--------", 0, $relayNo - 1) 					// do not change state for other relays
-			. $relayState		                        			// target relay state
-			. substr("--------", 0, 8 - $relayNo)	     			// do not change state for other relays
-			. chr(10);
-			
-			$id = $this->ReadPropertyInteger("LCNClientSocketId");
-			CSCK_SendText($id, $pck);
+			try
+			{
+				$groupNo = $this->ReadPropertyInteger("GroupNumber");
+				$relayNo = $this->ReadPropertyInteger("Channel");
+				$relayState = $switchOn === true ? "1" : "0";
+				
+				$pck = ">"
+				. "G"		                                  			// G=group, M=module
+				. "000"													// segment
+				. str_pad(strval($groupNo), 3, "0", STR_PAD_LEFT)		// module or group number
+				. "."
+				. "R8"													// relay
+				. substr("--------", 0, $relayNo - 1) 					// do not change state for other relays
+				. $relayState		                        			// target relay state
+				. substr("--------", 0, 8 - $relayNo)	     			// do not change state for other relays
+				. chr(10);
+				
+				$id = $this->ReadPropertyInteger("LCNClientSocketId");
+				CSCK_SendText($id, $pck);
+			} 
+			catch(Exception $e)
+			{
+				IPS_LogMessage("LCNGroup", "Exception: " . $e->getMessage());
+			}
 		}
 				
 		public function RequestAction($ident, $value)
