@@ -53,16 +53,22 @@
 				return;
 			}
 			if(!isset($_POST['device']) || !isset($_POST['id']) || !isset($_POST['trigger'])) {
-				IPS_LogMessage("Geofancy", "Malformed data: ".print_r($_POST, true));
+				IPS_LogMessage("Geofancy", "Malformed data: " . print_r($_POST, true));
 				return;
 			}
-			
+						
 			$deviceID = $this->CreateInstanceByIdent($this->InstanceID, $this->ReduceGUIDToIdent($_POST['device']), "Device");
 			SetValue($this->CreateVariableByIdent($deviceID, "Latitude", "Latitude", 2), floatval($_POST['latitude']));
 			SetValue($this->CreateVariableByIdent($deviceID, "Longitude", "Longitude", 2), floatval($_POST['longitude']));
-			SetValue($this->CreateVariableByIdent($deviceID, "Timestamp", "Timestamp", 1, "~UnixTimestamp"), intval(strtotime($_POST['timestamp'])));
-			SetValue($this->CreateVariableByIdent($deviceID, $this->ReduceGUIDToIdent($_POST['id']), utf8_decode($_POST['id']), 0, "~Presence"), $_POST['trigger'] == "enter");
+			SetValue($this->CreateVariableByIdent($deviceID, "Timestamp", "Timestamp", 1, "~UnixTimestamp"), intval($_POST['timestamp']));
 			
+			if ($trigger == "test")
+			{
+				IPS_LogMessage("Geofancy", "Test-Daten: " . print_r($_POST, true));
+				return;
+			}
+			
+			SetValue($this->CreateVariableByIdent($deviceID, $this->ReduceGUIDToIdent($_POST['id']), utf8_decode($_POST['id']), 0, "~Presence"), $_POST['trigger'] == "enter");
 		}
 		
 		private function ReduceGUIDToIdent($guid) {
