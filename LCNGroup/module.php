@@ -166,8 +166,8 @@
 					. "A";													// output
 				
 				if ($outputNo == 10) /* 1 + 2 + 3 + 4 = 10 */
-					$pck +=
-					"Y"														// all outputs
+					$pck = $pck
+					. "Y"													// all outputs
 					. str_pad(strval($intensity), 3, "0", STR_PAD_LEFT)		// output 1 intensity value 000...100
 					. str_pad(strval($intensity), 3, "0", STR_PAD_LEFT)		// output 2 intensity value 000...100
 					. str_pad(strval($intensity), 3, "0", STR_PAD_LEFT)		// output 3 intensity value 000...100
@@ -175,8 +175,8 @@
 					. strval($rr)											// ramp, 007 --> 3s
 					. chr(10);
 				else
-					$pck +=
-					$outputNo												// output number
+					$pck = $pck
+					. $outputNo												// output number
 					. "DI"													// output intensity
 					. str_pad(strval($intensity), 3, "0", STR_PAD_LEFT)		// output intensity value 000...100
 					. strval($rr)											// ramp, 007 --> 3s
