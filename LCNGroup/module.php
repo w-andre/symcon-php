@@ -175,6 +175,7 @@
 					break;
 				case "Intensity":
 					SetValueInteger($this->GetIDForIdent($ident), $value);
+					SetValueBoolean($this->GetIDForIdent("Status"), $value > 0);
 					$this->SetIntensity($value);
 					break;
 				case "LightScene":
