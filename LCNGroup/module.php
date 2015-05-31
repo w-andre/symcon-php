@@ -165,7 +165,7 @@
 					. "."
 					. "A";													// output
 				
-				if ($outputNo == 10) /* 1 + 2 + 3 + 4 = 10 */
+				if ($outputNo == 10) /* 1 + 2 + 3 + 4 = 10 , requires at least module firmware 1805 */
 					$pck = $pck
 					. "Y"													// all outputs
 					. str_pad(strval($intensity), 3, "0", STR_PAD_LEFT)		// output 1 intensity value 000...100
