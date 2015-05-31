@@ -132,7 +132,7 @@
 				case 0.50: return "002";
 				case 0.66: return "003";
 				case 1: return "004";
-				case 1.40: return "005":
+				case 1.40: return "005";
 				case 2: return "006";
 				case 3: return "007";
 				case 4: return "008";
