@@ -2,28 +2,22 @@
 	"elements":
 	[
 		{ "name": "GroupNumber", "type": "NumberSpinner", "caption": "Group Number" },
-		{ "name": "ShowOutput1", "type": "CheckBox", "caption": "Show Output 1" },
-		{ "name": "ShowOutput2", "type": "CheckBox", "caption": "Show Output 2" },
-		{ "name": "ShowOutput3", "type": "CheckBox", "caption": "Show Output 3" },
-		{ "name": "ShowRelay1", "type": "CheckBox", "caption": "Show Relay 1" },
-		{ "name": "ShowRelay2", "type": "CheckBox", "caption": "Show Relay 2" },
-		{ "name": "ShowRelay3", "type": "CheckBox", "caption": "Show Relay 3" },
-		{ "name": "ShowRelay4", "type": "CheckBox", "caption": "Show Relay 4" },
-		{ "name": "ShowRelay5", "type": "CheckBox", "caption": "Show Relay 5" },
-		{ "name": "ShowRelay6", "type": "CheckBox", "caption": "Show Relay 6" },
-		{ "name": "ShowRelay7", "type": "CheckBox", "caption": "Show Relay 7" },
-		{ "name": "ShowRelay8", "type": "CheckBox", "caption": "Show Relay 8" },
-		{ "name": "ShowLightScene", "type": "CheckBox", "caption": "Show Light Scene" },
+		{ "name": "Unit", "type": "Select", "caption": "Unit",
+			"options": [
+				  { "label": "Output", "value": 0 },
+				  { "label": "Relay", "value": 2 },
+				  { "label": "Light Scene", "value": 4 }
+			]
+		},
+		{ "name": "Channel", "type": "NumberSpinner", "caption": "Channel" },
 		{ "name": "Ramp", "type": "NumberSpinner", "caption": "Ramp (in seconds)" },
 		{ "name": "LCNClientSocketId", "type": "NumberSpinner", "caption": "LCN Client Socket ID" }
 	],
 	"actions":
 	[
-		{ "type": "HorizontalSlider", "name": "output1", "label": "Intensity Output 1", "minimum": 0, "maximum": 100, "onChange": "LCN_Group_SetIntensity($id, 1, $output1);" },
-		{ "type": "HorizontalSlider", "name": "output2", "label": "Intensity Output 2", "minimum": 0, "maximum": 100, "onChange": "LCN_Group_SetIntensity($id, 2, $output2);" },
-		{ "type": "HorizontalSlider", "name": "output3", "label": "Intensity Output 3", "minimum": 0, "maximum": 100, "onChange": "LCN_Group_SetIntensity($id, 3, $output3);" },
-		{ "type": "Button", "label": "Switch Relay 1 On", "onClick": "LCN_Group_SwitchRelay($id, 1, true);" },
-		{ "type": "Button", "label": "Switch Relay 1 Off", "onClick": "LCN_Group_SwitchRelay($id, 1, false);" },
+		{ "type": "HorizontalSlider", "name": "Slider", "label": "Intensity Output", "minimum": 0, "maximum": 100, "onChange": "LCN_Group_SetIntensity($id, $output1);" },
+		{ "type": "Button", "label": "Relay On", "onClick": "LCN_Group_SwitchRelay($id, true);" },
+		{ "type": "Button", "label": "Relay Off", "onClick": "LCN_Group_SwitchRelay($id, false);" },
 		{ "type": "Button", "label": "Load Light Scene 1", "onClick": "LCN_Group_LoadLightScene($id, 1);" },
 		{ "type": "Button", "label": "Save Light Scene 2", "onClick": "LCN_Group_SaveLightScene($id, 1);" }
 	]	
