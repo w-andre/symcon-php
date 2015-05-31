@@ -182,9 +182,9 @@
 					SetValueInteger($this->GetIDForIdent($ident), $value);
 					$saveSwitchState = GetValueBoolean($this->GetIDForIdent("LoadSaveLSSwitch"));
 					if ($saveSwitchState)
-						$this->Save($value);
+						$this->SaveLightScene($value);
 					else
-						$this->Load($value);
+						$this->LoadLightScene($value);
 					break;
 				default:
 					throw new Exception("Invalid ident");
