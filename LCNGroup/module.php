@@ -131,7 +131,7 @@
 			{
 				$groupNo = $this->ReadPropertyInteger("GroupNumber");
 				$relayNo = $this->ReadPropertyInteger("Channel");
-				$relayState = $switchOn === true ? "1" : "0";
+				$relayState = $switchOn == true ? "1" : "0";
 				
 				$pck = ">"
 				. "G"		                                  			// G=group, M=module
