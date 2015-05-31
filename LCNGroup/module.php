@@ -156,6 +156,7 @@
 			{
 				$groupNo = $this->ReadPropertyInteger("GroupNumber");
 				$outputNo = $this->ReadPropertyInteger("Channel");
+				$rr = $this->GetRamp();
 				
 				$pck = ">"
 				. "G"		                                  			// G=group, M=module
