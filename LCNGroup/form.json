@@ -1,0 +1,25 @@
+{
+	"elements":
+	[
+		{ "name": "GroupNumber", "type": "NumberSpinner", "caption": "Group Number" },
+		{ "name": "Output1", "type": "CheckBox", "caption": "Show Output 1" },
+		{ "name": "Output2", "type": "CheckBox", "caption": "Show Output 2" },
+		{ "name": "Output3", "type": "CheckBox", "caption": "Show Output 3" },
+		{ "name": "Relay1", "type": "CheckBox", "caption": "Show Relay 1" },
+		{ "name": "Relay2", "type": "CheckBox", "caption": "Show Relay 2" },
+		{ "name": "Relay3", "type": "CheckBox", "caption": "Show Relay 3" },
+		{ "name": "Relay4", "type": "CheckBox", "caption": "Show Relay 4" },
+		{ "name": "Relay5", "type": "CheckBox", "caption": "Show Relay 5" },
+		{ "name": "Relay6", "type": "CheckBox", "caption": "Show Relay 6" },
+		{ "name": "Relay7", "type": "CheckBox", "caption": "Show Relay 7" },
+		{ "name": "Relay8", "type": "CheckBox", "caption": "Show Relay 8" },
+		{ "name": "LightScene", "type": "CheckBox", "caption": "Show Light Scene" },
+		{ "name": "Ramp", "type": "NumberSpinner", "caption": "Ramp" },
+		{ "name": "LCNClientSocketId", "type": "ValidationTextBox", "caption": "LCN Client Socket ID" }
+	],
+	"actions":
+	[
+		{ "type": "Button", "label": "Load Light Scene 1", "onClick": "LCN_Group_LoadLightScene($id, 1);" },
+		{ "type": "Button", "label": "Save Light Scene 2", "onClick": "LCN_Group_SaveLightScene($id, 1);" }
+	]	
+}

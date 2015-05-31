@@ -1,5 +1,5 @@
 <?
-	class LCNGroupLightScene extends IPSModule
+	class LCNGroup extends IPSModule
 	{
 		public function __construct($InstanceID)
 		{
@@ -8,10 +8,27 @@
 			
 			//These lines are parsed on Symcon Startup or Instance creation
 			//You cannot use variables here. Just static values.
-			$this->RegisterPropertyString("LCNGroupNumber", "");
-			$this->RegisterPropertyString("Ramp", "007");
-			$this->RegisterPropertyString("LCNClientSocketId", "");
+			$this->RegisterPropertyInteger("GroupNumber", 0);
+			
+			$this->RegisterPropertyBoolean("Output1", 0);
+			$this->RegisterPropertyBoolean("Output2", 0);
+			$this->RegisterPropertyBoolean("Output3", 0);
+			
+			$this->RegisterPropertyBoolean("Relay1", 0);
+			$this->RegisterPropertyBoolean("Relay2", 0);
+			$this->RegisterPropertyBoolean("Relay3", 0);
+			$this->RegisterPropertyBoolean("Relay4", 0);
+			$this->RegisterPropertyBoolean("Relay5", 0);
+			$this->RegisterPropertyBoolean("Relay6", 0);
+			$this->RegisterPropertyBoolean("Relay7", 0);
+			$this->RegisterPropertyBoolean("Relay8", 0);
+			
+			$this->RegisterPropertyBoolean("LightScene", 0);
+						
+			$this->RegisterPropertyInteger("Ramp", 7);
+			$this->RegisterPropertyInteger("LCNClientSocketId", 0);
 		}
+		
 		public function ApplyChanges()
 		{
 			//Never delete this line!
@@ -42,12 +59,28 @@
 			
 		}
 		
-		public function Load($sceneNo){
-			$this->LoadOrSaveLightScene("G", $this->ReadPropertyString("LCNGroupNumber"), $sceneNo, "7", "007", "A");
+		public function Load($sceneNo)
+		{
+			try
+			{
+				$this->LoadOrSaveLightScene("G", $this->ReadPropertyInteger("GroupNumber"), $sceneNo, "7", "007", "A");
+			}
+			catch(Exception $e)
+			{
+				IPS_LogMessage("LCNGroup", "Exception: " . $e->getMessage());
+			}
 		}
-		
-		public function Save($sceneNo){
-			$this->LoadOrSaveLightScene("G", $this->ReadPropertyString("LCNGroupNumber"), $sceneNo, "7", "007", "S");
+	
+		public function Save($sceneNo)
+		{
+			try
+			{
+				$this->LoadOrSaveLightScene("G", $this->ReadPropertyString("GroupNumber"), $sceneNo, "7", "007", "S");
+			} 
+			catch(Exception $e)
+			{
+				IPS_LogMessage("LCNGroup", "Exception: " . $e->getMessage());
+			}
 		}
 		
 		private function LoadOrSaveLightScene($targetType, $targetId, $sceneNo, $channels, $rr, $loadOrSave) {
@@ -58,12 +91,12 @@
 			. "."
 			. "SZ"													// light scene
 			. $loadOrSave											// A=load, S=save
-			. $channels												// 1=output 1, 2=A2, 4=A3, 0=Relais (outputs are added together, 5=A1+A3, 7=all)
+			. $channels												// 1=output 1, 2=output 2, 4=output 3, 0=relay (outputs are added together, 5=A1+A3, 7=all)
 			. str_pad(strval($sceneNo), 3, "0", STR_PAD_LEFT)		// light scene 00 - 09, 15: take value from counter
-			. $rr													// ramp, 007 --> 3s or Relais, e.g. 10111011
+			. $rr													// ramp, 007 --> 3s or relay state, e.g. 10111011
 			. chr(10);
 			
-			$id = intval($this->ReadPropertyString("LCNClientSocketId"));
+			$id = $this->ReadPropertyInteger("LCNClientSocketId");
 			CSCK_SendText($id, $pck);
 		}
 				
