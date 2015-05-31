@@ -10,7 +10,6 @@
 			//You cannot use variables here. Just static values.
 			$this->RegisterPropertyInteger("GroupNumber", 0);
 			$this->RegisterPropertyInteger("Unit", 0);
-			$this->RegisterPropertyInteger("PreviousUnit", -1);
 			$this->RegisterPropertyInteger("Channel", 0);
 			$this->RegisterPropertyInteger("Ramp", 3);
 			$this->RegisterPropertyInteger("LCNClientSocketId", 0);
@@ -39,50 +38,55 @@
 				Array(1, "Yes", "", 65280),
 			));
 			
-			$prevUnit = $this->ReadPropertyInteger("PreviousUnit");
 			$unit = $this->ReadPropertyInteger("Unit");
 			$keepOutput = $unit == 0;
 			$keepRelay = $unit == 2;
 			$keepLightScene = $unit == 4;
 			
 			
-			switch ($prevUnit)
+			$this->CustomMaintainVariable("Status", "Status", 0, "~Switch", 10, $keepOutput);
+			$this->CustomMaintainVariable("Intensity", "Intensity", 1, "~Intensity.100", 20, $keepOutput);
+			if ($keepOutput)
 			{
-				case 0: // output
-					$this->UnregisterVariable("Status");
-					$this->UnregisterVariable("Intensity");
-					break;
-				case 2: // relay
-					$this->UnregisterVariable("Status");
-					break;
-				case 4; // light scene
-					$this->UnregisterVariable("LightScene");
-					$this->UnregisterVariable("LoadSaveLSSwitch");					
-					break;
+				$this->EnableAction("Status");
+				$this->EnableAction("Intensity");
+			}
+	
+			$this->CustomMaintainVariable("Status", "Status", 0, "~Switch", 10, $keepRelay);
+			if ($keepRelay) $this->EnableAction("Status");
+	
+			$this->CustomMaintainVariable("LightScene", "Light Scene", 1, "LightScene.LCN", 10, $keepLightScene);
+			$this->CustomMaintainVariable("LoadSaveLSSwitch", "Save Light Scene", 0, "LoadSaveLSSwitch.LCN", 20, $keepLightScene);
+			if ($keepLightScene)
+			{
+				$this->EnableAction("LightScene");
+				$this->EnableAction("LoadSaveLSSwitch");
 			}
 			
-			switch ($unit)
-			{
-				case 0: // output
-					$this->RegisterVariableBoolean("Status", "Status", "~Switch", 10);
-					$this->RegisterVariableInteger("Intensity", "Intensity", "~Intensity.100", 20);
-					$this->EnableAction("Status");
-					$this->EnableAction("Intensity");
-					break;
-				case 2: // relay
-					$this->RegisterVariableBoolean("Status", "Status", "~Switch", 10);
-					$this->EnableAction("Status");
-					break;
-				case 4; // light scene
-					$this->RegisterVariableInteger("LightScene", "Light Scene", "LightScene.LCN", 10);
-					$this->RegisterVariableBoolean("LoadSaveLSSwitch", "Save Light Scene", "LoadSaveLSSwitch.LCN", 20);	
-					$this->EnableAction("LightScene");
-					$this->EnableAction("LoadSaveLSSwitch");					
-					break;
-			}
-			
-			$this->Properties["PreviousUnit"] = $unit;
 		}
+				
+		private function CustomMaintainVariable($ident, $name, $type, $profile, $position, $keep) {
+			if($keep) {
+				switch($type)
+				{
+					case 0:
+						$this->RegisterVariableBoolean($ident, $name, $profile, $position);	
+						break;
+					case 1:
+						$this->RegisterVariableInteger($ident, $name, $profile, $position);	
+						break;
+				}				
+			} else {
+				$vid = @IPS_GetObjectIDByIdent($ident, $this->InstanceID);
+				IPS_LogMessage("LCNGroup", $vid);
+				if($vid !== false)
+					return;
+				if(!IPS_VariableExists($vid))
+				IPS_DeleteVariable($vid);
+					return; //bail out
+			}
+		}
+		
 		
 		public function LoadLightScene($sceneNo)
 		{
