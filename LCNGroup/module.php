@@ -58,7 +58,8 @@
 			}
 		}
 				
-		private function CustomMaintainVariable($ident, $name, $type, $profile, $position, $keep) {
+		private function CustomMaintainVariable($ident, $name, $type, $profile, $position, $keep)
+		{
 			if($keep) {
 				switch($type)
 				{
@@ -131,7 +132,8 @@
 			}			
 		}
 		
-		private function LoadOrSaveLightScene($targetType, $targetId, $sceneNo, $channels, $rr, $loadOrSave) {
+		private function LoadOrSaveLightScene($targetType, $targetId, $sceneNo, $channels, $rr, $loadOrSave)
+		{
 			$pck = ">"
 			. $targetType                                  			// G=group, M=module
 			. "000"													// segment
