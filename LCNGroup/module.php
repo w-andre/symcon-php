@@ -10,22 +10,22 @@
 			//You cannot use variables here. Just static values.
 			$this->RegisterPropertyInteger("GroupNumber", 0);
 			
-			$this->RegisterPropertyBoolean("Output1", 0);
-			$this->RegisterPropertyBoolean("Output2", 0);
-			$this->RegisterPropertyBoolean("Output3", 0);
+			$this->RegisterPropertyBoolean("ShowOutput1", 0);
+			$this->RegisterPropertyBoolean("ShowOutput2", 0);
+			$this->RegisterPropertyBoolean("ShowOutput3", 0);
 			
-			$this->RegisterPropertyBoolean("Relay1", 0);
-			$this->RegisterPropertyBoolean("Relay2", 0);
-			$this->RegisterPropertyBoolean("Relay3", 0);
-			$this->RegisterPropertyBoolean("Relay4", 0);
-			$this->RegisterPropertyBoolean("Relay5", 0);
-			$this->RegisterPropertyBoolean("Relay6", 0);
-			$this->RegisterPropertyBoolean("Relay7", 0);
-			$this->RegisterPropertyBoolean("Relay8", 0);
+			$this->RegisterPropertyBoolean("ShowRelay1", 0);
+			$this->RegisterPropertyBoolean("ShowRelay2", 0);
+			$this->RegisterPropertyBoolean("ShowRelay3", 0);
+			$this->RegisterPropertyBoolean("ShowRelay4", 0);
+			$this->RegisterPropertyBoolean("ShowRelay5", 0);
+			$this->RegisterPropertyBoolean("ShowRelay6", 0);
+			$this->RegisterPropertyBoolean("ShowRelay7", 0);
+			$this->RegisterPropertyBoolean("ShowRelay8", 0);
 			
-			$this->RegisterPropertyBoolean("LightScene", 0);
+			$this->RegisterPropertyBoolean("ShowLightScene", 0);
 						
-			$this->RegisterPropertyInteger("Ramp", 7);
+			$this->RegisterPropertyInteger("Ramp", 3);
 			$this->RegisterPropertyInteger("LCNClientSocketId", 0);
 		}
 		
@@ -52,18 +52,50 @@
 				Array(1, "Ja", "", 65280),
 			));
 			
-			$this->RegisterVariableInteger("LightScene", "Lichtszene", "LightScene.LCN");
-			$this->EnableAction("LightScene");
-			$this->RegisterVariableBoolean("LoadSaveLSSwitch", "Speichern", "LoadSaveLSSwitch.LCN");
-			$this->EnableAction("LoadSaveLSSwitch");
+			
+			if ($this->ReadPropertyBoolean("ShowOutput1") === true)
+			{
+				$this->RegisterVariableBoolean("StatusOutput1", "Status Output 1", "~Switch");
+				$this->EnableAction("StatusOutput1");
+				$this->RegisterVariableInteger("IntensityOutput1", "Intensity Output 1", "~Intensity.100");
+				$this->EnableAction("IntensityOutput1");
+			}
+			if ($this->ReadPropertyBoolean("ShowOutput2") === true)
+			{
+				$this->RegisterVariableBoolean("StatusOutput2", "Status Output 2", "~Switch");
+				$this->EnableAction("StatusOutput2");
+				$this->RegisterVariableInteger("IntensityOutput2", "Intensity Output 2", "~Intensity.100");
+				$this->EnableAction("IntensityOutput2");
+			}
+			if ($this->ReadPropertyBoolean("ShowOutput3") === true)
+			{
+				$this->RegisterVariableBoolean("StatusOutput3", "Status Output 3", "~Switch");
+				$this->EnableAction("StatusOutput3");
+				$this->RegisterVariableInteger("IntensityOutput3", "Intensity Output 3", "~Intensity.100");
+				$this->EnableAction("IntensityOutput3");
+			}
+			if ($this->ReadPropertyBoolean("ShowRelay1") === true)
+			{
+				$this->RegisterVariableBoolean("StatusRelay1", "Status Relay 1", "~Switch");
+				$this->EnableAction("StatusRelay1");
+			}
+			if ($this->ReadPropertyBoolean("ShowLightScene") === true)
+			{
+				$this->RegisterVariableInteger("LightScene", "Lichtszene", "LightScene.LCN");
+				$this->EnableAction("LightScene");
+				$this->RegisterVariableBoolean("LoadSaveLSSwitch", "Lichtszene speichern", "LoadSaveLSSwitch.LCN");
+				$this->EnableAction("LoadSaveLSSwitch");
+			}
+					
 			
 		}
 		
-		public function Load($sceneNo)
+		public function LoadLightScene($sceneNo)
 		{
 			try
 			{
-				$this->LoadOrSaveLightScene("G", $this->ReadPropertyInteger("GroupNumber"), $sceneNo, "7", "007", "A");
+				$rr = $this->GetRamp();
+				$this->LoadOrSaveLightScene("G", $this->ReadPropertyInteger("GroupNumber"), $sceneNo, "7", $rr, "A");
 			}
 			catch(Exception $e)
 			{
@@ -71,11 +103,12 @@
 			}
 		}
 	
-		public function Save($sceneNo)
+		public function SaveLightScene($sceneNo)
 		{
 			try
 			{
-				$this->LoadOrSaveLightScene("G", $this->ReadPropertyString("GroupNumber"), $sceneNo, "7", "007", "S");
+				$rr = $this->GetRamp();
+				$this->LoadOrSaveLightScene("G", $this->ReadPropertyInteger("GroupNumber"), $sceneNo, "7", $rr, "S");
 			} 
 			catch(Exception $e)
 			{
@@ -83,17 +116,44 @@
 			}
 		}
 		
+		private function GetRamp()
+		{
+			$seconds = $this->RegisterPropertyInteger("Ramp");
+			$rr = $this->GetRampFromSeconds($seconds);
+			return $rr;
+		}
+		
+		private function GetRampFromSeconds($seconds)
+		{
+			switch($seconds)
+			{
+				case 0: return "000";
+				case 0.25: return "001";
+				case 0.50: return "002";
+				case 0.66: return "003";
+				case 1: return "004";
+				case 1.40: return "005":
+				case 2: return "006";
+				case 3: return "007";
+				case 4: return "008";
+				case 5: return "009";
+				default:
+					$rr = ($seconds - 6) / 2 + 10;
+					return = str_pad(strval($rr), 3, "0", STR_PAD_LEFT);
+			}			
+		}
+		
 		private function LoadOrSaveLightScene($targetType, $targetId, $sceneNo, $channels, $rr, $loadOrSave) {
 			$pck = ">"
 			. $targetType                                  			// G=group, M=module
 			. "000"													// segment
-			. str_pad($targetId, 3, "0", STR_PAD_LEFT)				// module or group number
+			. str_pad(strval($targetId), 3, "0", STR_PAD_LEFT)		// module or group number
 			. "."
 			. "SZ"													// light scene
 			. $loadOrSave											// A=load, S=save
 			. $channels												// 1=output 1, 2=output 2, 4=output 3, 0=relay (outputs are added together, 5=A1+A3, 7=all)
 			. str_pad(strval($sceneNo), 3, "0", STR_PAD_LEFT)		// light scene 00 - 09, 15: take value from counter
-			. $rr													// ramp, 007 --> 3s or relay state, e.g. 10111011
+			. strval($rr)											// ramp, 007 --> 3s or relay state, e.g. 10111011
 			. chr(10);
 			
 			$id = $this->ReadPropertyInteger("LCNClientSocketId");

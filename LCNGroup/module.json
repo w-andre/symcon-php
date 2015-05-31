@@ -1,13 +1,13 @@
 {
 	"id": "{5FE1290F-5FB4-4FEB-8276-42D196D0686C}",
-	"name": "LCNGroup",
+	"name": "LCN Group",
 	"type": 3,
 	"vendor": "LCN",
 	"aliases": 
 	[
 		"LCN Group"
 	],
-	"parentRequirements": ["LCN Gateway"],
+	"parentRequirements": [],
 	"childRequirements": [],
 	"implemented": [],
 	"prefix": "LCN_Group"

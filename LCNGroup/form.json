@@ -2,23 +2,26 @@
 	"elements":
 	[
 		{ "name": "GroupNumber", "type": "NumberSpinner", "caption": "Group Number" },
-		{ "name": "Output1", "type": "CheckBox", "caption": "Show Output 1" },
-		{ "name": "Output2", "type": "CheckBox", "caption": "Show Output 2" },
-		{ "name": "Output3", "type": "CheckBox", "caption": "Show Output 3" },
-		{ "name": "Relay1", "type": "CheckBox", "caption": "Show Relay 1" },
-		{ "name": "Relay2", "type": "CheckBox", "caption": "Show Relay 2" },
-		{ "name": "Relay3", "type": "CheckBox", "caption": "Show Relay 3" },
-		{ "name": "Relay4", "type": "CheckBox", "caption": "Show Relay 4" },
-		{ "name": "Relay5", "type": "CheckBox", "caption": "Show Relay 5" },
-		{ "name": "Relay6", "type": "CheckBox", "caption": "Show Relay 6" },
-		{ "name": "Relay7", "type": "CheckBox", "caption": "Show Relay 7" },
-		{ "name": "Relay8", "type": "CheckBox", "caption": "Show Relay 8" },
-		{ "name": "LightScene", "type": "CheckBox", "caption": "Show Light Scene" },
-		{ "name": "Ramp", "type": "NumberSpinner", "caption": "Ramp" },
+		{ "name": "ShowOutput1", "type": "CheckBox", "caption": "Show Output 1" },
+		{ "name": "ShowOutput2", "type": "CheckBox", "caption": "Show Output 2" },
+		{ "name": "ShowOutput3", "type": "CheckBox", "caption": "Show Output 3" },
+		{ "name": "ShowRelay1", "type": "CheckBox", "caption": "Show Relay 1" },
+		{ "name": "ShowRelay2", "type": "CheckBox", "caption": "Show Relay 2" },
+		{ "name": "ShowRelay3", "type": "CheckBox", "caption": "Show Relay 3" },
+		{ "name": "ShowRelay4", "type": "CheckBox", "caption": "Show Relay 4" },
+		{ "name": "ShowRelay5", "type": "CheckBox", "caption": "Show Relay 5" },
+		{ "name": "ShowRelay6", "type": "CheckBox", "caption": "Show Relay 6" },
+		{ "name": "ShowRelay7", "type": "CheckBox", "caption": "Show Relay 7" },
+		{ "name": "ShowRelay8", "type": "CheckBox", "caption": "Show Relay 8" },
+		{ "name": "ShowLightScene", "type": "CheckBox", "caption": "Show Light Scene" },
+		{ "name": "Ramp", "type": "NumberSpinner", "caption": "Ramp (in seconds)" },
 		{ "name": "LCNClientSocketId", "type": "ValidationTextBox", "caption": "LCN Client Socket ID" }
 	],
 	"actions":
 	[
+		{ "type": "HorizontalSlider", "name": "output1", "minimum": 0, "maximum": 100, "onChange": "LCN_Group_SetIntensity($id, 1, $output1);" },
+		{ "type": "HorizontalSlider", "name": "output2", "minimum": 0, "maximum": 100, "onChange": "LCN_Group_SetIntensity($id, 2, $output2);" },
+		{ "type": "HorizontalSlider", "name": "output3", "minimum": 0, "maximum": 100, "onChange": "LCN_Group_SetIntensity($id, 3, $output3);" },
 		{ "type": "Button", "label": "Load Light Scene 1", "onClick": "LCN_Group_LoadLightScene($id, 1);" },
 		{ "type": "Button", "label": "Save Light Scene 2", "onClick": "LCN_Group_SaveLightScene($id, 1);" }
 	]	
