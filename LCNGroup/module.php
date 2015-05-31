@@ -160,7 +160,6 @@
 			$relayNo = $this->ReadPropertyInteger("Channel");
 			$relayState = $switchOn === true ? "1" : "0";
 			
-			
 			$pck = ">"
 			. "G"		                                  			// G=group, M=module
 			. "000"													// segment
