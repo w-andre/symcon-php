@@ -139,7 +139,7 @@
 				case 5: return "009";
 				default:
 					$rr = ($seconds - 6) / 2 + 10;
-					return = str_pad(strval($rr), 3, "0", STR_PAD_LEFT);
+					return str_pad(strval($rr), 3, "0", STR_PAD_LEFT);
 			}			
 		}
 		
