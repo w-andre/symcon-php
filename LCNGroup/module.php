@@ -51,6 +51,8 @@
 				Array(0, "Nein", "", 16711680),
 				Array(1, "Ja", "", 65280),
 			));
+			
+			$this->UpdateInstance();
 		}
 		
 		public function UpdateInstance()
