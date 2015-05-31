@@ -17,8 +17,16 @@
 		
 		public function ApplyChanges()
 		{
+			$oldUnit = $this->ReadPropertyInteger("Unit");
+			IPS_LogMessage("LCNGroup", "old unit: " . $oldUnit);
+			
+			
 			//Never delete this line!
 			parent::ApplyChanges();
+			
+			$newUnit = $this->ReadPropertyInteger("Unit");
+			IPS_LogMessage("LCNGroup", "new unit: " . $newUnit);
+			return;
 			
 			$this->RegisterProfileEx("LightScene.LCN", "Bulb", "", "", 1 /* Integer */, Array(
 				Array(0, "Light Scene 1", "", -1),
