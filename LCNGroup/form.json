@@ -15,14 +15,15 @@
 		{ "name": "ShowRelay8", "type": "CheckBox", "caption": "Show Relay 8" },
 		{ "name": "ShowLightScene", "type": "CheckBox", "caption": "Show Light Scene" },
 		{ "name": "Ramp", "type": "NumberSpinner", "caption": "Ramp (in seconds)" },
-		{ "name": "LCNClientSocketId", "type": "NumberSpinner", "caption": "LCN Client Socket ID" },
-		{ "name": "UpdateInstanceButton", "type": "Button", "label": "Update instance", "onClick": "LCN_Group_UpdateInstance($id);" }
+		{ "name": "LCNClientSocketId", "type": "NumberSpinner", "caption": "LCN Client Socket ID" }
 	],
 	"actions":
 	[
 		{ "type": "HorizontalSlider", "name": "output1", "label": "Intensity Output 1", "minimum": 0, "maximum": 100, "onChange": "LCN_Group_SetIntensity($id, 1, $output1);" },
 		{ "type": "HorizontalSlider", "name": "output2", "label": "Intensity Output 2", "minimum": 0, "maximum": 100, "onChange": "LCN_Group_SetIntensity($id, 2, $output2);" },
 		{ "type": "HorizontalSlider", "name": "output3", "label": "Intensity Output 3", "minimum": 0, "maximum": 100, "onChange": "LCN_Group_SetIntensity($id, 3, $output3);" },
+		{ "type": "Button", "label": "Switch Relay 1 On", "onClick": "LCN_Group_SwitchRelay($id, 1, true);" },
+		{ "type": "Button", "label": "Switch Relay 1 Off", "onClick": "LCN_Group_SwitchRelay($id, 1, false);" },
 		{ "type": "Button", "label": "Load Light Scene 1", "onClick": "LCN_Group_LoadLightScene($id, 1);" },
 		{ "type": "Button", "label": "Save Light Scene 2", "onClick": "LCN_Group_SaveLightScene($id, 1);" }
 	]	

@@ -55,41 +55,65 @@
 			$this->UpdateInstance();
 		}
 		
-		public function UpdateInstance()
+		private function UpdateVariables($name, $displayName, $type)
 		{
-			if ($this->ReadPropertyBoolean("ShowOutput1") === true)
+			if ($this->ReadPropertyBoolean("Show" . $name) === true)
 			{
-				$this->RegisterVariableBoolean("StatusOutput1", "Status Output 1", "~Switch");
-				$this->EnableAction("StatusOutput1");
-				$this->RegisterVariableInteger("IntensityOutput1", "Intensity Output 1", "~Intensity.100");
-				$this->EnableAction("IntensityOutput1");
+				// show --> register variables depending on type
+				switch($type)
+				{
+					case 0: // output
+						$this->RegisterVariableBoolean("Status" . $name, "Status " . $displayName, "~Switch");
+						$this->EnableAction("Status" . $name);
+						$this->RegisterVariableBoolean("Intensity" . $name, "Intensity " . $displayName, "~Intensity.100");
+						$this->EnableAction("Intensity" . $name);
+						break;
+					case 1: // relay
+						$this->RegisterVariableBoolean("Status" . $name, "Status " . $displayName, "~Switch");
+						$this->EnableAction("Status" . $name);
+						break;
+					case 2: // light scene
+						$this->RegisterVariableInteger($name, $displayName, "LightScene.LCN");
+						$this->EnableAction($name);
+						$this->RegisterVariableBoolean("LoadSaveLSSwitch", "Save " . $displayName, "LoadSaveLSSwitch.LCN");
+						$this->EnableAction("LoadSaveLSSwitch");
+						break;
+				}
 			}
-			if ($this->ReadPropertyBoolean("ShowOutput2") === true)
+			else
 			{
-				$this->RegisterVariableBoolean("StatusOutput2", "Status Output 2", "~Switch");
-				$this->EnableAction("StatusOutput2");
-				$this->RegisterVariableInteger("IntensityOutput2", "Intensity Output 2", "~Intensity.100");
-				$this->EnableAction("IntensityOutput2");
+				// do not show --> unregister variables depending on type
+				switch($type)
+				{
+					case 0: // output
+						$this->UnregisterVariable("Status" . $name);
+						$this->UnregisterVariable("Intensity" . $name);
+						break;
+					case 1: // relay
+						$this->UnregisterVariable("Status" . $name);
+						break;
+					case 2: // light scene
+						$this->UnregisterVariable($name);
+						$this->UnregisterVariable("LoadSaveLSSwitch");
+						break;
+				}
 			}
-			if ($this->ReadPropertyBoolean("ShowOutput3") === true)
-			{
-				$this->RegisterVariableBoolean("StatusOutput3", "Status Output 3", "~Switch");
-				$this->EnableAction("StatusOutput3");
-				$this->RegisterVariableInteger("IntensityOutput3", "Intensity Output 3", "~Intensity.100");
-				$this->EnableAction("IntensityOutput3");
-			}
-			if ($this->ReadPropertyBoolean("ShowRelay1") === true)
-			{
-				$this->RegisterVariableBoolean("StatusRelay1", "Status Relay 1", "~Switch");
-				$this->EnableAction("StatusRelay1");
-			}
-			if ($this->ReadPropertyBoolean("ShowLightScene") === true)
-			{
-				$this->RegisterVariableInteger("LightScene", "Lichtszene", "LightScene.LCN");
-				$this->EnableAction("LightScene");
-				$this->RegisterVariableBoolean("LoadSaveLSSwitch", "Lichtszene speichern", "LoadSaveLSSwitch.LCN");
-				$this->EnableAction("LoadSaveLSSwitch");
-			}
+		}
+		
+		private function UpdateInstance()
+		{
+			$this->UpdateVariables("Output1", "Output 1", 0);
+			$this->UpdateVariables("Output2", "Output 2", 0);
+			$this->UpdateVariables("Output3", "Output 3", 0);
+			$this->UpdateVariables("Relay1", "Relay 1", 1);
+			$this->UpdateVariables("Relay2", "Relay 2", 1);
+			$this->UpdateVariables("Relay3", "Relay 3", 1);
+			$this->UpdateVariables("Relay4", "Relay 4", 1);
+			$this->UpdateVariables("Relay5", "Relay 5", 1);
+			$this->UpdateVariables("Relay6", "Relay 6", 1);
+			$this->UpdateVariables("Relay7", "Relay 7", 1);
+			$this->UpdateVariables("Relay8", "Relay 8", 1);
+			$this->UpdateVariables("LightScene", "Light Scene", 2);
 		}
 		
 		public function LoadLightScene($sceneNo)
@@ -156,6 +180,46 @@
 			. $channels												// 1=output 1, 2=output 2, 4=output 3, 0=relay (outputs are added together, 5=A1+A3, 7=all)
 			. str_pad(strval($sceneNo), 3, "0", STR_PAD_LEFT)		// light scene 00 - 09, 15: take value from counter
 			. strval($rr)											// ramp, 007 --> 3s or relay state, e.g. 10111011
+			. chr(10);
+			
+			$id = $this->ReadPropertyInteger("LCNClientSocketId");
+			CSCK_SendText($id, $pck);
+		}
+		
+		public function SetIntensity($outputNo, $intensity)
+		{
+			$groupNo = $this->ReadPropertyInteger("GroupNumber");
+			
+			$pck = ">"
+			. "G"		                                  			// G=group, M=module
+			. "000"													// segment
+			. str_pad(strval($groupNo), 3, "0", STR_PAD_LEFT)		// module or group number
+			. "."
+			. "A"													// output
+			. $outputNo												// output number
+			. "DI"													// output intensity
+			. str_pad(strval($intensity), 3, "0", STR_PAD_LEFT)		// output intensity value 000...100
+			. strval($rr)											// ramp, 007 --> 3s
+			. chr(10);
+			
+			$id = $this->ReadPropertyInteger("LCNClientSocketId");
+			CSCK_SendText($id, $pck);
+		}
+		
+		public function SwitchRelay($relayNo, $switchOn)
+		{
+			$groupNo = $this->ReadPropertyInteger("GroupNumber");
+			$relayState = $switchOn === true ? "1" : "0";
+			
+			$pck = ">"
+			. "G"		                                  			// G=group, M=module
+			. "000"													// segment
+			. str_pad(strval($groupNo), 3, "0", STR_PAD_LEFT)		// module or group number
+			. "."
+			. "R8"													// relay
+			. substr("--------", 0, $relayNo - 1) 					// do not change state for other relays
+			. $relayState		                        			// target relay state
+			. substr("--------", 0, 8 - $relayNo)	     			// do not change state for other relays
 			. chr(10);
 			
 			$id = $this->ReadPropertyInteger("LCNClientSocketId");
