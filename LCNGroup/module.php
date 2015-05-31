@@ -9,7 +9,6 @@
 			//These lines are parsed on Symcon Startup or Instance creation
 			//You cannot use variables here. Just static values.
 			$this->RegisterPropertyInteger("GroupNumber", 0);
-			
 			$this->RegisterPropertyInteger("Unit", 0);						
 			$this->RegisterPropertyInteger("Channel", 0);
 			$this->RegisterPropertyInteger("Ramp", 3);
@@ -45,17 +44,23 @@
 			$keepLightScene = $unit == 4;
 			
 			$this->MaintainVariable("Status", "Status", 0, "~Switch", 0, $keepOutput);
-			$this->MaintainAction("Status", $keepOutput);
 			$this->MaintainVariable("Intensity", "Intensity", 1, "~Intensity.100", 1, $keepOutput);
-			$this->MaintainAction("Intensity", $keepOutput);
+			if ($keepOutput)
+			{
+				$this->EnableAction("Status");
+				$this->EnableAction("Intensity");
+			}
 	
 			$this->MaintainVariable("Status", "Status", 0, "~Switch", 0, $keepRelay);
-			$this->MaintainAction("Status", $keepRelay);
+			if ($keepRelay) $this->EnableAction("Status");
 	
 			$this->MaintainVariable("LightScene", "Light Scene", 1, "LightScene.LCN", 0, $keepLightScene);
-			$this->MaintainAction("LightScene", $keepLightScene);
 			$this->MaintainVariable("LoadSaveLSSwitch", "Save Light Scene", 0, "LoadSaveLSSwitch.LCN", 1, $keepLightScene);
-			$this->MaintainAction("LoadSaveLSSwitch", $keepLightScene);
+			if ($keepLightScene)
+			{
+				$this->EnableAction("LightScene");
+				$this->EnableAction("LoadSaveLSSwitch");
+			}
 		}
 		
 		public function LoadLightScene($sceneNo)
