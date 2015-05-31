@@ -58,27 +58,6 @@
 			}
 		}
 				
-		private function CustomMaintainVariable($ident, $name, $type, $profile, $position, $keep)
-		{
-			if($keep) {
-				switch($type)
-				{
-					case 0:
-						$this->RegisterVariableBoolean($ident, $name, $profile, $position);	
-						break;
-					case 1:
-						$this->RegisterVariableInteger($ident, $name, $profile, $position);	
-						break;
-				}				
-			} else {
-				$vid = @IPS_GetObjectIDByIdent($ident, $this->InstanceID);
-				if(!is_int($vid) || !IPS_VariableExists($vid))
-					return; //bail out
-				IPS_DeleteVariable($vid);
-			}
-		}
-		
-		
 		public function LoadLightScene($sceneNo)
 		{
 			try
@@ -104,52 +83,7 @@
 				IPS_LogMessage("LCNGroup", "Exception: " . $e->getMessage());
 			}
 		}
-		
-		private function GetRamp()
-		{
-			$seconds = $this->ReadPropertyInteger("Ramp");
-			$rr = $this->GetRampFromSeconds($seconds);
-			return $rr;
-		}
-		
-		private function GetRampFromSeconds($seconds)
-		{
-			switch($seconds)
-			{
-				case 0: return "000";
-				case 0.25: return "001";
-				case 0.50: return "002";
-				case 0.66: return "003";
-				case 1: return "004";
-				case 1.40: return "005";
-				case 2: return "006";
-				case 3: return "007";
-				case 4: return "008";
-				case 5: return "009";
-				default:
-					$rr = ($seconds - 6) / 2 + 10;
-					return str_pad(strval($rr), 3, "0", STR_PAD_LEFT);
-			}			
-		}
-		
-		private function LoadOrSaveLightScene($targetType, $targetId, $sceneNo, $channels, $rr, $loadOrSave)
-		{
-			$pck = ">"
-			. $targetType                                  			// G=group, M=module
-			. "000"													// segment
-			. str_pad(strval($targetId), 3, "0", STR_PAD_LEFT)		// module or group number
-			. "."
-			. "SZ"													// light scene
-			. $loadOrSave											// A=load, S=save
-			. $channels												// 1=output 1, 2=output 2, 4=output 3, 0=relay (outputs are added together, 5=A1+A3, 7=all)
-			. str_pad(strval($sceneNo), 3, "0", STR_PAD_LEFT)		// light scene 00 - 09, 15: take value from counter
-			. strval($rr)											// ramp, 007 --> 3s or relay state, e.g. 10111011
-			. chr(10);
 			
-			$id = $this->ReadPropertyInteger("LCNClientSocketId");
-			CSCK_SendText($id, $pck);
-		}
-		
 		public function SetIntensity($intensity)
 		{
 			try
@@ -232,6 +166,7 @@
 						case 0: // output
 							$intensity = $value ? 100 : 0;
 							$this->SetIntensity($intensity);
+							SetValueInteger($this->GetIDForIdent("Intensity"), $intensity);
 							break;
 						case 2: // relay
 							$this->SwitchRelay($value);
@@ -255,7 +190,71 @@
 			}
 		}
 		
-		//Remove on next Symcon update
+		private function GetRamp()
+		{
+			$seconds = $this->ReadPropertyInteger("Ramp");
+			$rr = $this->GetRampFromSeconds($seconds);
+			return $rr;
+		}
+		
+		private function GetRampFromSeconds($seconds)
+		{
+			switch($seconds)
+			{
+				case 0: return "000";
+				case 0.25: return "001";
+				case 0.50: return "002";
+				case 0.66: return "003";
+				case 1: return "004";
+				case 1.40: return "005";
+				case 2: return "006";
+				case 3: return "007";
+				case 4: return "008";
+				case 5: return "009";
+				default:
+					$rr = ($seconds - 6) / 2 + 10;
+					return str_pad(strval($rr), 3, "0", STR_PAD_LEFT);
+			}			
+		}
+		
+		private function LoadOrSaveLightScene($targetType, $targetId, $sceneNo, $channels, $rr, $loadOrSave)
+		{
+			$pck = ">"
+			. $targetType                                  			// G=group, M=module
+			. "000"													// segment
+			. str_pad(strval($targetId), 3, "0", STR_PAD_LEFT)		// module or group number
+			. "."
+			. "SZ"													// light scene
+			. $loadOrSave											// A=load, S=save
+			. $channels												// 1=output 1, 2=output 2, 4=output 3, 0=relay (outputs are added together, 5=A1+A3, 7=all)
+			. str_pad(strval($sceneNo), 3, "0", STR_PAD_LEFT)		// light scene 00 - 09, 15: take value from counter
+			. strval($rr)											// ramp, 007 --> 3s or relay state, e.g. 10111011
+			. chr(10);
+			
+			$id = $this->ReadPropertyInteger("LCNClientSocketId");
+			CSCK_SendText($id, $pck);
+		}
+		
+		private function CustomMaintainVariable($ident, $name, $type, $profile, $position, $keep)
+		{
+			if($keep) {
+				switch($type)
+				{
+					case 0:
+						$this->RegisterVariableBoolean($ident, $name, $profile, $position);	
+						break;
+					case 1:
+						$this->RegisterVariableInteger($ident, $name, $profile, $position);	
+						break;
+				}				
+			} else {
+				$vid = @IPS_GetObjectIDByIdent($ident, $this->InstanceID);
+				if(!is_int($vid) || !IPS_VariableExists($vid))
+					return; //bail out
+				IPS_DeleteVariable($vid);
+			}
+		}
+		
 		protected function RegisterProfile($name, $icon, $prefix, $suffix, $minValue, $maxValue, $stepSize, $profileType) {
 		
 			if(!IPS_VariableProfileExists($name)) {
