@@ -55,65 +55,45 @@
 			$this->UpdateInstance();
 		}
 		
-		private function UpdateVariables($name, $displayName, $type)
+		private function UpdateVariables($name, $displayName, $type, $position)
 		{
-			if ($this->ReadPropertyBoolean("Show" . $name) === true)
+			$keep = $this->ReadPropertyBoolean("Show" . $name);
+			
+			switch($type)
 			{
-				// show --> register variables depending on type
-				switch($type)
-				{
-					case 0: // output
-						$this->RegisterVariableBoolean("Status" . $name, "Status " . $displayName, "~Switch");
-						$this->EnableAction("Status" . $name);
-						$this->RegisterVariableInteger("Intensity" . $name, "Intensity " . $displayName, "~Intensity.100");
-						$this->EnableAction("Intensity" . $name);
-						break;
-					case 1: // relay
-						$this->RegisterVariableBoolean("Status" . $name, "Status " . $displayName, "~Switch");
-						$this->EnableAction("Status" . $name);
-						break;
-					case 2: // light scene
-						$this->RegisterVariableInteger($name, $displayName, "LightScene.LCN");
-						$this->EnableAction($name);
-						$this->RegisterVariableBoolean("LoadSaveLSSwitch", "Save " . $displayName, "LoadSaveLSSwitch.LCN");
-						$this->EnableAction("LoadSaveLSSwitch");
-						break;
-				}
-			}
-			else
-			{
-				// do not show --> unregister variables depending on type
-				switch($type)
-				{
-					case 0: // output
-						$this->UnregisterVariable("Status" . $name);
-						$this->UnregisterVariable("Intensity" . $name);
-						break;
-					case 1: // relay
-						$this->UnregisterVariable("Status" . $name);
-						break;
-					case 2: // light scene
-						$this->UnregisterVariable($name);
-						$this->UnregisterVariable("LoadSaveLSSwitch");
-						break;
-				}
+				case 0: // output
+					$this->MaintainVariable("Status" . $name, "Status " . $displayName, 0, "~Switch", $position, $keep);
+					$this->MaintainAction("Status" . $name, $keep);
+					$this->MaintainVariable("Intensity" . $name, "Intensity " . $displayName, 1, "~Intensity.100", $position + 1, $keep);
+					$this->MaintainAction("Intensity" . $name, $keep);
+					break;
+				case 1: // relay
+					$this->MaintainVariable("Status" . $name, "Status " . $displayName, 0, "~Switch", $position, $keep);
+					$this->MaintainAction("Status" . $name, $keep);
+					break;
+				case 2: // light scene
+					$this->MaintainVariable($name, $displayName, 1, "LightScene.LCN", $position, $keep);
+					$this->MaintainAction($name, $keep);
+					$this->MaintainVariable("LoadSaveLSSwitch", "Save " . $displayName, 0, "LoadSaveLSSwitch.LCN", $position + 1, $keep);
+					$this->MaintainAction("LoadSaveLSSwitch", $keep);
+					break;
 			}
 		}
 		
 		private function UpdateInstance()
 		{
-			$this->UpdateVariables("Output1", "Output 1", 0);
-			$this->UpdateVariables("Output2", "Output 2", 0);
-			$this->UpdateVariables("Output3", "Output 3", 0);
-			$this->UpdateVariables("Relay1", "Relay 1", 1);
-			$this->UpdateVariables("Relay2", "Relay 2", 1);
-			$this->UpdateVariables("Relay3", "Relay 3", 1);
-			$this->UpdateVariables("Relay4", "Relay 4", 1);
-			$this->UpdateVariables("Relay5", "Relay 5", 1);
-			$this->UpdateVariables("Relay6", "Relay 6", 1);
-			$this->UpdateVariables("Relay7", "Relay 7", 1);
-			$this->UpdateVariables("Relay8", "Relay 8", 1);
-			$this->UpdateVariables("LightScene", "Light Scene", 2);
+			$this->UpdateVariables("Output1", "Output 1", 0, 10);
+			$this->UpdateVariables("Output2", "Output 2", 0, 20);
+			$this->UpdateVariables("Output3", "Output 3", 0, 30);
+			$this->UpdateVariables("Relay1", "Relay 1", 1, 40);
+			$this->UpdateVariables("Relay2", "Relay 2", 1, 50);
+			$this->UpdateVariables("Relay3", "Relay 3", 1, 60);
+			$this->UpdateVariables("Relay4", "Relay 4", 1, 70);
+			$this->UpdateVariables("Relay5", "Relay 5", 1, 80);
+			$this->UpdateVariables("Relay6", "Relay 6", 1, 90);
+			$this->UpdateVariables("Relay7", "Relay 7", 1, 100);
+			$this->UpdateVariables("Relay8", "Relay 8", 1, 110);
+			$this->UpdateVariables("LightScene", "Light Scene", 2, 120);
 		}
 		
 		public function LoadLightScene($sceneNo)
