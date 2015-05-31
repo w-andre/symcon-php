@@ -15,7 +15,7 @@
 		{ "name": "ShowRelay8", "type": "CheckBox", "caption": "Show Relay 8" },
 		{ "name": "ShowLightScene", "type": "CheckBox", "caption": "Show Light Scene" },
 		{ "name": "Ramp", "type": "NumberSpinner", "caption": "Ramp (in seconds)" },
-		{ "name": "LCNClientSocketId", "type": "ValidationTextBox", "caption": "LCN Client Socket Instance ID" }
+		{ "name": "LCNClientSocketId", "type": "ValidationTextBox", "caption": "LCN Client Socket Instance ID" },
 		{ "name": "UpdateInstanceButton", "type": "Button", "label": "Update instance", "onClick": "LCN_Group_UpdateInstance($id);" }
 	],
 	"actions":
