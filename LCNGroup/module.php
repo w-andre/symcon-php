@@ -52,9 +52,9 @@
 			$this->MaintainVariable("Status", "Status", 0, "~Switch", 0, $keepRelay);
 			$this->MaintainAction("Status", $keepRelay);
 	
-			$this->MaintainVariable("LightScene", "Light Scene", 1, "LightScene.LCN", $position, $keepLightScene);
+			$this->MaintainVariable("LightScene", "Light Scene", 1, "LightScene.LCN", 0, $keepLightScene);
 			$this->MaintainAction("LightScene", $keepLightScene);
-			$this->MaintainVariable("LoadSaveLSSwitch", "Save Light Scene", 0, "LoadSaveLSSwitch.LCN", $position + 1, $keepLightScene);
+			$this->MaintainVariable("LoadSaveLSSwitch", "Save Light Scene", 0, "LoadSaveLSSwitch.LCN", 1, $keepLightScene);
 			$this->MaintainAction("LoadSaveLSSwitch", $keepLightScene);
 		}
 		
