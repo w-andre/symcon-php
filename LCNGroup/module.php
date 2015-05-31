@@ -78,12 +78,9 @@
 				}				
 			} else {
 				$vid = @IPS_GetObjectIDByIdent($ident, $this->InstanceID);
-				IPS_LogMessage("LCNGroup", "ID: " . strval($vid));
-				if($vid !== false)
-					return;
-				if(!IPS_VariableExists($vid))
-				IPS_DeleteVariable($vid);
+				if(!is_int($vid) || !IPS_VariableExists($vid))
 					return; //bail out
+				IPS_DeleteVariable($vid);
 			}
 		}
 		
