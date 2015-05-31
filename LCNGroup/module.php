@@ -182,7 +182,10 @@
 					SetValueInteger($this->GetIDForIdent($ident), $value);
 					$saveSwitchState = GetValueBoolean($this->GetIDForIdent("LoadSaveLSSwitch"));
 					if ($saveSwitchState)
+					{
 						$this->SaveLightScene($value);
+						SetValueBoolean($this->GetIDForIdent("LoadSaveLSSwitch"), false);
+					}
 					else
 						$this->LoadLightScene($value);
 					break;
