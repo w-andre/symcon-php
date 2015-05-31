@@ -62,7 +62,7 @@
 			SetValue($this->CreateVariableByIdent($deviceID, "Longitude", "Longitude", 2), floatval($_POST['longitude']));
 			SetValue($this->CreateVariableByIdent($deviceID, "Timestamp", "Timestamp", 1, "~UnixTimestamp"), intval($_POST['timestamp']));
 			
-			if ($trigger == "test")
+			if ($_POST['trigger'] == "test")
 			{
 				IPS_LogMessage("Geofancy", "Test-Daten: " . print_r($_POST, true));
 				return;
