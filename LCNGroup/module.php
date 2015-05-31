@@ -158,14 +158,16 @@
 				$outputNo = $this->ReadPropertyInteger("Channel");
 				$rr = $this->GetRamp();
 				
-				if ($outputNo == 10) /* 1 + 2 + 3 + 4 = 10 */
-					$pck = ">"
+				$pck = ">"
 					. "G"		                                  			// G=group, M=module
 					. "000"													// segment
 					. str_pad(strval($groupNo), 3, "0", STR_PAD_LEFT)		// module or group number
 					. "."
-					. "A"													// output
-					. "Y"													// all outputs
+					. "A";													// output
+				
+				if ($outputNo == 10) /* 1 + 2 + 3 + 4 = 10 */
+					$pck +=
+					"Y"														// all outputs
 					. str_pad(strval($intensity), 3, "0", STR_PAD_LEFT)		// output 1 intensity value 000...100
 					. str_pad(strval($intensity), 3, "0", STR_PAD_LEFT)		// output 2 intensity value 000...100
 					. str_pad(strval($intensity), 3, "0", STR_PAD_LEFT)		// output 3 intensity value 000...100
@@ -173,13 +175,8 @@
 					. strval($rr)											// ramp, 007 --> 3s
 					. chr(10);
 				else
-					$pck = ">"
-					. "G"		                                  			// G=group, M=module
-					. "000"													// segment
-					. str_pad(strval($groupNo), 3, "0", STR_PAD_LEFT)		// module or group number
-					. "."
-					. "A"													// output
-					. $outputNo												// output number
+					$pck +=
+					$outputNo												// output number
 					. "DI"													// output intensity
 					. str_pad(strval($intensity), 3, "0", STR_PAD_LEFT)		// output intensity value 000...100
 					. strval($rr)											// ramp, 007 --> 3s
