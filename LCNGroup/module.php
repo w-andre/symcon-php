@@ -65,7 +65,7 @@
 					case 0: // output
 						$this->RegisterVariableBoolean("Status" . $name, "Status " . $displayName, "~Switch");
 						$this->EnableAction("Status" . $name);
-						$this->RegisterVariableBoolean("Intensity" . $name, "Intensity " . $displayName, "~Intensity.100");
+						$this->RegisterVariableInteger("Intensity" . $name, "Intensity " . $displayName, "~Intensity.100");
 						$this->EnableAction("Intensity" . $name);
 						break;
 					case 1: // relay
