@@ -18,6 +18,6 @@
 		{ "type": "Button", "label": "Relay On", "onClick": "LCNGroup_SwitchRelay($id, true);" },
 		{ "type": "Button", "label": "Relay Off", "onClick": "LCNGroup_SwitchRelay($id, false);" },
 		{ "type": "Button", "label": "Load Light Scene 1", "onClick": "LCNGroup_LoadLightScene($id, 1);" },
-		{ "type": "Button", "label": "Save Light Scene 2", "onClick": "LCNGroup_SaveLightScene($id, 1);" }
+		{ "type": "Button", "label": "Save Light Scene 1", "onClick": "LCNGroup_SaveLightScene($id, 1);" }
 	]	
 }
