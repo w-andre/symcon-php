@@ -8,10 +8,10 @@
 			
 			//These lines are parsed on Symcon Startup or Instance creation
 			//You cannot use variables here. Just static values.
-			if (!isset($this->Properties["GroupNumber"])) $this->RegisterPropertyInteger("GroupNumber");
-			if (!isset($this->Properties["Unit"])) $this->RegisterPropertyInteger("Unit");
-			if (!isset($this->Properties["Channel"])) $this->RegisterPropertyInteger("Channel");
-			if (!isset($this->Properties["Ramp"])) $this->RegisterPropertyInteger("Ramp");
+			if (!isset($this->Properties["GroupNumber"])) $this->RegisterPropertyInteger("GroupNumber", 0);
+			if (!isset($this->Properties["Unit"])) $this->RegisterPropertyInteger("Unit", 0);
+			if (!isset($this->Properties["Channel"])) $this->RegisterPropertyInteger("Channel", 0);
+			if (!isset($this->Properties["Ramp"])) $this->RegisterPropertyInteger("Ramp", 3);
 		}
 		
 		public function ApplyChanges()
