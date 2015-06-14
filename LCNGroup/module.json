@@ -9,6 +9,6 @@
 	],
 	"parentRequirements" : ["{9BDFC391-DEFF-4B71-A76B-604DBA80F207}"],
 	"childRequirements" : [],
-	"implemented" : [],
+	"implemented" : ["{0E31FED6-E465-4621-95D4-AAF2683C41EC}"],
 	"prefix" : "LCNGroup"
 }

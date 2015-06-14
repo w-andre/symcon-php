@@ -19,6 +19,9 @@
 		{
 			//Never delete this line!
 			parent::ApplyChanges();
+			
+			// connect to LCN Gateway
+			$this->ConnectParent('{9BDFC391-DEFF-4B71-A76B-604DBA80F207}');
 					
 			$this->RegisterProfileEx("LightScene.LCN", "Bulb", "", "", 1 /* Integer */, Array(
 				Array(0, "Light Scene 1", "", -1),
