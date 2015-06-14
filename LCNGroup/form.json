@@ -10,8 +10,7 @@
 			]
 		},
 		{ "name": "Channel", "type": "NumberSpinner", "caption": "Channel" },
-		{ "name": "Ramp", "type": "NumberSpinner", "caption": "Ramp (in seconds)" },
-		{ "name": "LCNClientSocketId", "type": "NumberSpinner", "caption": "LCN Client Socket ID" }
+		{ "name": "Ramp", "type": "NumberSpinner", "caption": "Ramp (in seconds)" }
 	],
 	"actions":
 	[

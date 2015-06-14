@@ -8,11 +8,10 @@
 			
 			//These lines are parsed on Symcon Startup or Instance creation
 			//You cannot use variables here. Just static values.
-			$this->RegisterPropertyInteger("GroupNumber", 0);
-			$this->RegisterPropertyInteger("Unit", 0);
-			$this->RegisterPropertyInteger("Channel", 0);
-			$this->RegisterPropertyInteger("Ramp", 3);
-			$this->RegisterPropertyInteger("LCNClientSocketId", 0);
+			$this->RegisterPropertyInteger("GroupNumber");
+			$this->RegisterPropertyInteger("Unit");
+			$this->RegisterPropertyInteger("Channel");
+			$this->RegisterPropertyInteger("Ramp");
 		}
 		
 		public function ApplyChanges()
@@ -20,8 +19,8 @@
 			//Never delete this line!
 			parent::ApplyChanges();
 			
-			// connect to LCN Gateway
-			$this->ConnectParent('{9BDFC391-DEFF-4B71-A76B-604DBA80F207}');
+			// connect to Client Socket of LCN Gateway
+			$this->CustomConnectParent();
 					
 			$this->RegisterProfileEx("LightScene.LCN", "Bulb", "", "", 1 /* Integer */, Array(
 				Array(0, "Light Scene 1", "", -1),
@@ -207,10 +206,7 @@
 		
 		private function SendLcnPckCommand($pck)
 		{
-			/*$id = $this->ReadPropertyInteger("LCNClientSocketId");
-			CSCK_SendText($id, $pck);*/
-			
-			$this->SendDataToParent(json_encode(Array("DataID" => "{9BDFC391-DEFF-4B71-A76B-604DBA80F207}", "Buffer" => $pck)));
+			$this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => $pck)));
 		}		
 				
 		private static function GetRampFromSeconds($seconds)
@@ -250,6 +246,19 @@
 				if(!is_int($vid) || !IPS_VariableExists($vid))
 					return; //bail out
 				IPS_DeleteVariable($vid);
+			}
+		}
+		
+		protected function CustomConnectParent() {
+		
+			$instance = IPS_GetInstance($this->InstanceID);
+			if($instance['ConnectionID'] == 0) {
+				$gatewayListIds = IPS_GetInstanceListByModuleID('{9BDFC391-DEFF-4B71-A76B-604DBA80F207}');
+				if(sizeof($gatewayListIds) > 0) {
+					$gateway = IPS_GetInstance($gatewayList[0]);
+					IPS_ConnectInstance($this->InstanceID, $gateway['ConnectionID']);
+					return;
+				}
 			}
 		}
 		
