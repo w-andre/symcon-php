@@ -116,10 +116,10 @@
 		public function SwitchRelay($switchOn)
 		{
 			$relayNo = $this->ReadPropertyInteger("Channel");
-			$this->SwitchRelay($relayNo, $switchOn);
+			$this->SwitchSpecificRelay($relayNo, $switchOn);
 		}
 		
-		public function SwitchRelay($relayNo, $switchOn)
+		public function SwitchSpecificRelay($relayNo, $switchOn)
 		{
 			$groupNo = $this->ReadPropertyInteger("GroupNumber");
 			$relayNo = $this->ReadPropertyInteger("Channel");
