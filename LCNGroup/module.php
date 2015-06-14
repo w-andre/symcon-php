@@ -8,10 +8,10 @@
 			
 			//These lines are parsed on Symcon Startup or Instance creation
 			//You cannot use variables here. Just static values.
-			$this->RegisterPropertyInteger("GroupNumber");
-			$this->RegisterPropertyInteger("Unit");
-			$this->RegisterPropertyInteger("Channel");
-			$this->RegisterPropertyInteger("Ramp");
+			if (!isset($this->Properties["GroupNumber"])) $this->RegisterPropertyInteger("GroupNumber");
+			if (!isset($this->Properties["Unit"])) $this->RegisterPropertyInteger("Unit");
+			if (!isset($this->Properties["Channel"])) $this->RegisterPropertyInteger("Channel");
+			if (!isset($this->Properties["Ramp"])) $this->RegisterPropertyInteger("Ramp");
 		}
 		
 		public function ApplyChanges()
@@ -59,6 +59,72 @@
 				$this->EnableAction("LoadSaveLSSwitch");
 			}
 		}
+		
+		
+		private function CustomMaintainVariable($ident, $name, $type, $profile, $position, $keep)
+		{
+			if($keep) {
+				switch($type)
+				{
+					case 0:
+						$this->RegisterVariableBoolean($ident, $name, $profile, $position);	
+						break;
+					case 1:
+						$this->RegisterVariableInteger($ident, $name, $profile, $position);	
+						break;
+				}				
+			} else {
+				$vid = @IPS_GetObjectIDByIdent($ident, $this->InstanceID);
+				if(!is_int($vid) || !IPS_VariableExists($vid))
+					return; //bail out
+				IPS_DeleteVariable($vid);
+			}
+		}
+		
+		protected function CustomConnectParent() {
+		
+			$instance = IPS_GetInstance($this->InstanceID);
+			if($instance['ConnectionID'] == 0) {
+				$gatewayListIds = IPS_GetInstanceListByModuleID('{9BDFC391-DEFF-4B71-A76B-604DBA80F207}');
+				if(sizeof($gatewayListIds) > 0) {
+					$gateway = IPS_GetInstance($gatewayList[0]);
+					IPS_ConnectInstance($this->InstanceID, $gateway['ConnectionID']);
+					return;
+				}
+			}
+		}
+		
+		protected function RegisterProfile($name, $icon, $prefix, $suffix, $minValue, $maxValue, $stepSize, $profileType) {
+		
+			if(!IPS_VariableProfileExists($name)) {
+				IPS_CreateVariableProfile($name, $profileType);
+				IPS_SetVariableProfileIcon($name, $icon);
+				IPS_SetVariableProfileText($name, $prefix, $suffix);
+				IPS_SetVariableProfileValues($name, $minValue, $maxValue, $stepSize);
+				return true;
+			} else {
+				$profile = IPS_GetVariableProfile($name);
+				if($profile['ProfileType'] != $profileType)
+					throw new Exception("Variable profile type does not match for profile " . $name);
+				return false;
+			}
+		}
+		
+		protected function RegisterProfileEx($name, $icon, $prefix, $suffix, $profileType, $associations) {
+		
+			$result = $this->RegisterProfile($name, $icon, $prefix, $suffix, $associations[0][0], $associations[sizeof($associations)-1][0], 0, $profileType);
+			if (!$result) return; // do not set associations if the profile did already exist
+			
+			foreach($associations as $association) {
+				IPS_SetVariableProfileAssociation($name, $association[0], $association[1], $association[2], $association[3]);
+			}
+			
+		}
+		
+		
+		/*
+			LCN specific functions
+		*/
 				
 		public function LoadLightScene($sceneNo)
 		{
@@ -227,66 +293,6 @@
 					$rr = ($seconds - 6) / 2 + 10;
 					return str_pad(strval($rr), 3, "0", STR_PAD_LEFT);
 			}			
-		}
-		
-		private function CustomMaintainVariable($ident, $name, $type, $profile, $position, $keep)
-		{
-			if($keep) {
-				switch($type)
-				{
-					case 0:
-						$this->RegisterVariableBoolean($ident, $name, $profile, $position);	
-						break;
-					case 1:
-						$this->RegisterVariableInteger($ident, $name, $profile, $position);	
-						break;
-				}				
-			} else {
-				$vid = @IPS_GetObjectIDByIdent($ident, $this->InstanceID);
-				if(!is_int($vid) || !IPS_VariableExists($vid))
-					return; //bail out
-				IPS_DeleteVariable($vid);
-			}
-		}
-		
-		protected function CustomConnectParent() {
-		
-			$instance = IPS_GetInstance($this->InstanceID);
-			if($instance['ConnectionID'] == 0) {
-				$gatewayListIds = IPS_GetInstanceListByModuleID('{9BDFC391-DEFF-4B71-A76B-604DBA80F207}');
-				if(sizeof($gatewayListIds) > 0) {
-					$gateway = IPS_GetInstance($gatewayList[0]);
-					IPS_ConnectInstance($this->InstanceID, $gateway['ConnectionID']);
-					return;
-				}
-			}
-		}
-		
-		protected function RegisterProfile($name, $icon, $prefix, $suffix, $minValue, $maxValue, $stepSize, $profileType) {
-		
-			if(!IPS_VariableProfileExists($name)) {
-				IPS_CreateVariableProfile($name, $profileType);
-				IPS_SetVariableProfileIcon($name, $icon);
-				IPS_SetVariableProfileText($name, $prefix, $suffix);
-				IPS_SetVariableProfileValues($name, $minValue, $maxValue, $stepSize);
-				return true;
-			} else {
-				$profile = IPS_GetVariableProfile($name);
-				if($profile['ProfileType'] != $profileType)
-					throw new Exception("Variable profile type does not match for profile " . $name);
-				return false;
-			}
-		}
-		
-		protected function RegisterProfileEx($name, $icon, $prefix, $suffix, $profileType, $associations) {
-		
-			$result = $this->RegisterProfile($name, $icon, $prefix, $suffix, $associations[0][0], $associations[sizeof($associations)-1][0], 0, $profileType);
-			if (!$result) return; // do not set associations if the profile did already exist
-			
-			foreach($associations as $association) {
-				IPS_SetVariableProfileAssociation($name, $association[0], $association[1], $association[2], $association[3]);
-			}
-			
 		}
 	}
 ?>
