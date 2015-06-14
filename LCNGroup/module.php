@@ -8,11 +8,6 @@
 			
 			//These lines are parsed on Symcon Startup or Instance creation
 			//You cannot use variables here. Just static values.
-			$this->RegisterPropertyInteger("GroupNumber", 0);
-			$this->RegisterPropertyInteger("Unit", 0);
-			$this->RegisterPropertyInteger("Channel", 0);
-			$this->RegisterPropertyInteger("Ramp", 3);
-			$this->RegisterPropertyInteger("LCNClientSocketId", 0);
 		}
 		
 		public function ApplyChanges()
@@ -204,11 +199,13 @@
 		
 		private function SendLcnPckCommand($pck)
 		{
-			$id = $this->ReadPropertyInteger("LCNClientSocketId");
-			CSCK_SendText($id, $pck);
+			/*$id = $this->ReadPropertyInteger("LCNClientSocketId");
+			CSCK_SendText($id, $pck);*/
+			
+			$this->SendDataToParent(json_encode(Array("DataID" => "{9BDFC391-DEFF-4B71-A76B-604DBA80F207}", "Buffer" => $pck)));
 		}		
 				
-		private function GetRampFromSeconds($seconds)
+		private static function GetRampFromSeconds($seconds)
 		{
 			switch($seconds)
 			{
