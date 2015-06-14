@@ -71,17 +71,17 @@
 		public function SetIntensity($intensity)
 		{
 			$outputNo = $this->ReadPropertyInteger("Channel");
-			$this->SetIntensity($outputNo, $intensity);
+			$this->SetSpecificOutputIntensity($outputNo, $intensity);
 		}
 		
 		
-		public function SetIntensity($outputNo, $intensity)
+		public function SetSpecificOutputIntensity($outputNo, $intensity)
 		{
 			$ramp = $this->ReadPropertyInteger("Ramp");
-			$this->SetIntensity($outputNo, $intensity, $ramp);
+			$this->SetSpecificOutputIntensityWithRamp($outputNo, $intensity, $ramp);
 		}
 		
-		public function SetIntensity($outputNo, $intensity, $rampInSeconds)
+		public function SetSpecificOutputIntensityWithRamp($outputNo, $intensity, $rampInSeconds)
 		{
 			$groupNo = $this->ReadPropertyInteger("GroupNumber");
 			$rr = $this->GetRampFromSeconds($rampInSeconds);
