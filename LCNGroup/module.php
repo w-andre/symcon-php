@@ -87,7 +87,7 @@
 			if($instance['ConnectionID'] == 0) {
 				$gatewayListIds = IPS_GetInstanceListByModuleID('{9BDFC391-DEFF-4B71-A76B-604DBA80F207}');
 				if(sizeof($gatewayListIds) > 0) {
-					$gateway = IPS_GetInstance($gatewayList[0]);
+					$gateway = IPS_GetInstance($gatewayListIds[0]);
 					IPS_ConnectInstance($this->InstanceID, $gateway['ConnectionID']);
 					return;
 				}
