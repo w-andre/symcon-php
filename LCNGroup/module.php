@@ -156,14 +156,12 @@ class LCNGroup extends IPSModule {
 				. str_pad(strval($intensity), 3, "0", STR_PAD_LEFT)	// output 2 intensity value 000...100
 				. str_pad(strval($intensity), 3, "0", STR_PAD_LEFT)	// output 3 intensity value 000...100
 				. str_pad(strval($intensity), 3, "0", STR_PAD_LEFT)	// output 4 intensity value 000...100
-				. strval($rr)										// ramp, 007 --> 3s
-				. chr(10);
+				. strval($rr);										// ramp, 007 --> 3s
 		else
 			$data = $outputNo										// output number
 				. "DI"												// output intensity
 				. str_pad(strval($intensity), 3, "0", STR_PAD_LEFT)	// output intensity value 000...100
-				. strval($rr)										// ramp, 007 --> 3s
-				. chr(10);
+				. strval($rr);										// ramp, 007 --> 3s
 
 		$this->SendLcnPckCommand(1, $segment, $target, "A", $data);
 	}
@@ -181,7 +179,7 @@ class LCNGroup extends IPSModule {
 
 		$data = substr("--------", 0, $relayNo - 1)	// do not change state for other relays
 			. $relayState							// target relay state
-			. substr("--------", 0, 8 - $relayNo)	// do not change state for other relays
+			. substr("--------", 0, 8 - $relayNo);	// do not change state for other relays
 
 		$this->SendLcnPckCommand(1, $segment, $target, "R8", $data);
 	}
@@ -232,6 +230,15 @@ class LCNGroup extends IPSModule {
 		}
 	}
 
+	/*
+		Send LCN PCK command to LCN Gateway instance.
+		
+		@param	int		$address	0 for module, 1 for group
+		@param	int		$segment	LCN segment
+		@param	int		$target		module/group id
+		@param	string	$function	PCK function, e.g. "SZ" for controlling light scenes
+		@param	string	$data		PCK function data, e.g. "A700007" to load light scene 1 for all outputs with a ramp of 3s
+	*/
 	private function SendLcnPckCommand($address, $segment, $target, $function, $data) {
 		$this->SendDataToParent(json_encode(Array(
 			"DataID"	=> "{C5755489-1880-4968-9894-F8028FE1020A}",
