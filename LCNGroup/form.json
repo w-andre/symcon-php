@@ -1,7 +1,7 @@
 {
 	"elements": [
 		{ "name": "Segment", "type": "NumberSpinner", "caption": "Segment" },
-		{ "name": "GroupNumber", "type": "NumberSpinner", "caption": "Group Number" },
+		{ "name": "Group", "type": "NumberSpinner", "caption": "Group" },
 		{ "name": "Unit", "type": "Select", "caption": "Unit", "options": [
 			{ "label": "Output", "value": 0 },
 			{ "label": "Relay", "value": 2 },

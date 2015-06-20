@@ -8,7 +8,7 @@ class LCNGroup extends IPSModule {
 		//These lines are parsed on Symcon Startup or Instance creation
 		//You cannot use variables here. Just static values.
 		$this->RegisterPropertyInteger("Segment", 0);
-		$this->RegisterPropertyInteger("GroupNumber", 0);
+		$this->RegisterPropertyInteger("Group", 0);
 		$this->RegisterPropertyInteger("Unit", 0);
 		$this->RegisterPropertyInteger("Channel", 0);
 		$this->RegisterPropertyInteger("Ramp", 3);
@@ -46,6 +46,7 @@ class LCNGroup extends IPSModule {
 		// get current unit configuration
 		$unit = $this->ReadPropertyInteger("Unit");
 
+		// update variables for current configuration
 		switch ($unit) {
 			case 0: // output
 				$this->CustomMaintainVariable("Status", "Status", 0, "~Switch", 10, true);
@@ -121,7 +122,7 @@ class LCNGroup extends IPSModule {
 
 	public function LoadLightScene($sceneNo) {
 		$segment = $this->ReadPropertyInteger("Segment");
-		$target = $this->ReadPropertyInteger("GroupNumber");
+		$target = $this->ReadPropertyInteger("Group");
 		$ramp = $this->ReadPropertyInteger("Ramp");
 		$rr = $this->GetRampFromSeconds($ramp);
 		
@@ -130,9 +131,12 @@ class LCNGroup extends IPSModule {
 	}
 
 	public function SaveLightScene($sceneNo) {
+		$segment = $this->ReadPropertyInteger("Segment");
+		$target = $this->ReadPropertyInteger("Group");
 		$ramp = $this->ReadPropertyInteger("Ramp");
 		$rr = $this->GetRampFromSeconds($ramp);
-		$this->LoadOrSaveLightScene("G", $this->ReadPropertyInteger("GroupNumber"), $sceneNo, "7", $rr, "S"); // all outputs AND all relays
+		
+		$this->LoadOrSaveLightScene(1, $segment, $target, $sceneNo, "7", $rr, "S"); // all outputs (relays are always saved)
 	}
 
 	public function SetIntensity($intensity) {
@@ -147,7 +151,7 @@ class LCNGroup extends IPSModule {
 
 	public function SetSpecificOutputIntensityWithRamp($outputNo, $intensity, $rampInSeconds) {
 		$segment = $this->ReadPropertyInteger("Segment");
-		$target = $this->ReadPropertyInteger("GroupNumber");
+		$target = $this->ReadPropertyInteger("Group");
 		$rr = $this->GetRampFromSeconds($rampInSeconds);
 		
 		if ($outputNo == 10) /* 1 + 2 + 3 + 4 = 10 , requires at least module firmware 1805 */
@@ -173,13 +177,13 @@ class LCNGroup extends IPSModule {
 
 	public function SwitchSpecificRelay($relayNo, $switchOn) {
 		$segment = $this->ReadPropertyInteger("Segment");
-		$target = $this->ReadPropertyInteger("GroupNumber");
-		$relayNo = $this->ReadPropertyInteger("Channel");
+		$target = $this->ReadPropertyInteger("Group");
+		$relay = $this->ReadPropertyInteger("Channel");
 		$relayState = $switchOn == true ? "1" : "0";
 
-		$data = substr("--------", 0, $relayNo - 1)	// do not change state for other relays
+		$data = substr("--------", 0, $relay - 1)	// do not change state for other relays
 			. $relayState							// target relay state
-			. substr("--------", 0, 8 - $relayNo);	// do not change state for other relays
+			. substr("--------", 0, 8 - $relay);	// do not change state for other relays
 
 		$this->SendLcnPckCommand(1, $segment, $target, "R8", $data);
 	}
