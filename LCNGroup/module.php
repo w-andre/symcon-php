@@ -25,16 +25,16 @@ class LCNGroup extends IPSModule {
 		// register variable profile for light scenes
 		// do not overwrite existing associations (allow renaming light scenes)
 		$this->RegisterProfileEx("LightScene.LCN", "Bulb", "", "", 1 /* Integer */, Array(
-			Array(0, "Light Scene 1", "", -1),
-			Array(1, "Light Scene 2", "", -1),
-			Array(2, "Light Scene 3", "", -1),
-			Array(3, "Light Scene 4", "", -1),
-			Array(4, "Light Scene 5", "", -1),
-			Array(5, "Light Scene 6", "", -1),
-			Array(6, "Light Scene 7", "", -1),
-			Array(7, "Light Scene 8", "", -1),
-			Array(8, "Light Scene 9", "", -1),
-			Array(9, "Light Scene 10", "", -1)
+			Array(1, "Light Scene 1", "", -1),
+			Array(2, "Light Scene 2", "", -1),
+			Array(3, "Light Scene 3", "", -1),
+			Array(4, "Light Scene 4", "", -1),
+			Array(5, "Light Scene 5", "", -1),
+			Array(6, "Light Scene 6", "", -1),
+			Array(7, "Light Scene 7", "", -1),
+			Array(8, "Light Scene 8", "", -1),
+			Array(9, "Light Scene 9", "", -1),
+			Array(10, "Light Scene 10", "", -1)
 		));
 
 		// register variable profile for load/save light scene switch
@@ -185,9 +185,9 @@ class LCNGroup extends IPSModule {
 	}
 
 	public function LoadOrSaveLightScene($address, $segment, $target, $sceneNo, $channels, $rr, $loadOrSave) {
-		$data = $loadOrSave										// A=load, S=save
-			. $channels											// 1=output 1, 2=output 2, 4=output 3, 0=relay (outputs are added together, 5=A1+A3, 7=all)
-			. str_pad(strval($sceneNo), 3, "0", STR_PAD_LEFT)	// light scene 00 - 09, 15: take value from counter
+		$data = $loadOrSave											// A=load, S=save
+			. $channels												// 1=output 1, 2=output 2, 4=output 3, 0=relay (outputs are added together, 5=A1+A3, 7=all)
+			. str_pad(strval($sceneNo - 1), 3, "0", STR_PAD_LEFT)	// light scene 00 - 09, 15: take value from counter
 			. strval($rr);
 
 		$this->SendLcnPckCommand($address, $segment, $target, "SZ", $data);
