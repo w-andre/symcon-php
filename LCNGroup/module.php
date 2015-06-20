@@ -245,7 +245,7 @@ class LCNGroup extends IPSModule {
 			"Address"	=> $address,	// int, '1' for LCN group
 			"Segment"	=> $segment,	// int
 			"Target"	=> $target,		// int
-			"Function"	=> $funct,		// string
+			"Function"	=> $function,	// string
 			"Data"		=> $data)		// string
 		));
 	}
