@@ -246,11 +246,11 @@ class LCNGroup extends IPSModule {
 	private function SendLcnPckCommand($address, $segment, $target, $function, $data) {
 		$this->SendDataToParent(json_encode(Array(
 			"DataID"	=> "{C5755489-1880-4968-9894-F8028FE1020A}",
-			"Address"	=> $address,	// int, '1' for LCN group
-			"Segment"	=> $segment,	// int
-			"Target"	=> $target,		// int
-			"Function"	=> $function,	// string
-			"Data"		=> $data)		// string
+			"Address"	=> $address,
+			"Segment"	=> $segment,
+			"Target"	=> $target,
+			"Function"	=> $function,
+			"Data"		=> $data)
 		));
 	}
 
