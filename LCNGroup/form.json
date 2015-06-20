@@ -1,23 +1,20 @@
 {
-	"elements":
-	[
+	"elements": [
+		{ "name": "Segment", "type": "NumberSpinner", "caption": "Segment" },
 		{ "name": "GroupNumber", "type": "NumberSpinner", "caption": "Group Number" },
-		{ "name": "Unit", "type": "Select", "caption": "Unit",
-			"options": [
-				  { "label": "Output", "value": 0 },
-				  { "label": "Relay", "value": 2 },
-				  { "label": "Light Scene", "value": 4 }
-			]
-		},
+		{ "name": "Unit", "type": "Select", "caption": "Unit", "options": [
+			{ "label": "Output", "value": 0 },
+			{ "label": "Relay", "value": 2 },
+			{ "label": "Light Scene", "value": 4 }
+		] },
 		{ "name": "Channel", "type": "NumberSpinner", "caption": "Channel" },
 		{ "name": "Ramp", "type": "NumberSpinner", "caption": "Ramp (in seconds)" }
 	],
-	"actions":
-	[
-		{ "type": "HorizontalSlider", "name": "Slider", "caption": "Intensity Output", "minimum": 0, "maximum": 100, "onChange": "LCNGroup_SetIntensity($id, $Slider);" },
+	"actions": [
+		{ "type": "HorizontalSlider", "name": "Slider", "caption": "Output intensity", "minimum": 0, "maximum": 100, "onChange": "LCNGroup_SetIntensity($id, $Slider);" },
 		{ "type": "Button", "label": "Relay On", "onClick": "LCNGroup_SwitchRelay($id, true);" },
 		{ "type": "Button", "label": "Relay Off", "onClick": "LCNGroup_SwitchRelay($id, false);" },
 		{ "type": "Button", "label": "Load Light Scene 1", "onClick": "LCNGroup_LoadLightScene($id, 1);" },
 		{ "type": "Button", "label": "Save Light Scene 1", "onClick": "LCNGroup_SaveLightScene($id, 1);" }
-	]	
+	]
 }

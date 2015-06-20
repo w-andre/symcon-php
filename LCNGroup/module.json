@@ -3,11 +3,8 @@
 	"name" : "LCN Group",
 	"type" : 3,
 	"vendor" : "LCN",
-	"aliases" :
-	[
-		"LCN Group"
-	],
-	"parentRequirements" : ["{3CFF0FD9-E306-41DB-9B5A-9D06D38576C3}"],
+	"aliases" : ["LCN Group"],
+	"parentRequirements" : ["{9BDFC391-DEFF-4B71-A76B-604DBA80F207}"],
 	"childRequirements" : [],
 	"implemented" : [],
 	"prefix" : "LCNGroup"
