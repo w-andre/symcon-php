@@ -53,7 +53,7 @@ class LCNGroup extends IPSModule {
 				$this->EnableAction("Status");
 				$this->CustomMaintainVariable("Intensity", "Intensity", 1, "~Intensity.100", 20, true);
 				$this->EnableAction("Intensity");
-				$this->CustomMaintainVariable("LightScene", "Light Scene", 1, "LightScene.LCN", 10, false);
+				$this->CustomMaintainVariable("LightScene", "LightScene", 1, "LightScene.LCN", 10, false);
 				$this->CustomMaintainVariable("LoadSaveLSSwitch", "Save Light Scene", 0, "LoadSaveLSSwitch.LCN", 20, false);
 				break;
 			case 2: // relay
@@ -66,9 +66,9 @@ class LCNGroup extends IPSModule {
 			case 4: // light scene
 				$this->CustomMaintainVariable("Status", "Status", 0, "~Switch", 10, false);
 				$this->CustomMaintainVariable("Intensity", "Intensity", 1, "~Intensity.100", 20, false);
-				$this->CustomMaintainVariable("LightScene", "Light Scene", 1, "LightScene.LCN", 10, true);
+				$this->CustomMaintainVariable("LightScene", "Lichtszene", 1, "LightScene.LCN", 10, true);
 				$this->EnableAction("LightScene");
-				$this->CustomMaintainVariable("LoadSaveLSSwitch", "Save Light Scene", 0, "LoadSaveLSSwitch.LCN", 20, true);
+				$this->CustomMaintainVariable("LoadSaveLSSwitch", "Speichern", 0, "LoadSaveLSSwitch.LCN", 20, true);
 				$this->EnableAction("LoadSaveLSSwitch");
 				break;
 		}
