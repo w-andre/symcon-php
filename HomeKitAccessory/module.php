@@ -160,38 +160,38 @@ class HomeKitAccessory extends IPSModule {
 				return $targetValue;
 			case 'TargetDoorState':
 				switch ($homeKitValue) {
-					case HMCharacteristicValueDoorState::Open:
+					case 0: //HMCharacteristicValueDoorState::Open
 						$targetValueString = $this->ReadPropertyString("TargetDoorStateOpen");
 						break;
-					case HMCharacteristicValueDoorState::Closed:
+					case 1: //HMCharacteristicValueDoorState::Closed
 						$targetValueString = $this->ReadPropertyString("TargetDoorStateClosed");
 						break;
-					case HMCharacteristicValueDoorState::Opening:
+					case 2: //HMCharacteristicValueDoorState::Opening
 						$targetValueString = $this->ReadPropertyString("TargetDoorStateOpening");
 						break;
-					case HMCharacteristicValueDoorState::Closing:
+					case 3: //HMCharacteristicValueDoorState::Closing
 						$targetValueString = $this->ReadPropertyString("TargetDoorStateClosing");
 						break;
-					case HMCharacteristicValueDoorState::Stopped:
+					case 4: //HMCharacteristicValueDoorState::Stopped
 						$targetValueString = $this->ReadPropertyString("TargetDoorStateStopped");
 						break;
 				}
 				break;
 			case 'CurrentDoorState':
 				switch ($homeKitValue) {
-					case HMCharacteristicValueDoorState::Open:
+					case 0: //HMCharacteristicValueDoorState::Open
 						$targetValueString = $this->ReadPropertyString("CurrentDoorStateOpen");
 						break;
-					case HMCharacteristicValueDoorState::Closed:
+					case 1: //HMCharacteristicValueDoorState::Closed
 						$targetValueString = $this->ReadPropertyString("CurrentDoorStateClosed");
 						break;
-					case HMCharacteristicValueDoorState::Opening:
+					case 2: //HMCharacteristicValueDoorState::Opening
 						$targetValueString = $this->ReadPropertyString("CurrentDoorStateOpening");
 						break;
-					case HMCharacteristicValueDoorState::Closing:
+					case 3: //HMCharacteristicValueDoorState::Closing
 						$targetValueString = $this->ReadPropertyString("CurrentDoorStateClosing");
 						break;
-					case HMCharacteristicValueDoorState::Stopped:
+					case 4: //HMCharacteristicValueDoorState::Stopped
 						$targetValueString = $this->ReadPropertyString("CurrentDoorStateStopped");
 						break;
 				}
@@ -233,29 +233,29 @@ class HomeKitAccessory extends IPSModule {
 			case 'TargetDoorState':
 				switch ($valueString) {
 					case $this->ReadPropertyString("TargetDoorStateOpen"):
-						return HMCharacteristicValueDoorState::Open;
+						return 0; //HMCharacteristicValueDoorState::Open;
 					case $this->ReadPropertyString("TargetDoorStateClosed"):
-						return HMCharacteristicValueDoorState::Closed;
+						return 1; //HMCharacteristicValueDoorState::Closed;
 					case $this->ReadPropertyString("TargetDoorStateOpening"):
-						return HMCharacteristicValueDoorState::Opening;
+						return 2; //HMCharacteristicValueDoorState::Opening;
 					case $this->ReadPropertyString("TargetDoorStateClosing"):
-						return HMCharacteristicValueDoorState::Closing;
+						return 3; //HMCharacteristicValueDoorState::Closing;
 					case $this->ReadPropertyString("TargetDoorStateStopped"):
-						return HMCharacteristicValueDoorState::Stopped;
+						return 4; //HMCharacteristicValueDoorState::Stopped;
 				}
 				break;
 			case 'DoorState':
 				switch ($valueString) {
 					case $this->ReadPropertyString("CurrentDoorStateOpen"):
-						return HMCharacteristicValueDoorState::Open;
+						return 0; //HMCharacteristicValueDoorState::Open;
 					case $this->ReadPropertyString("CurrentDoorStateClosed"):
-						return HMCharacteristicValueDoorState::Closed;
+						return 1; //HMCharacteristicValueDoorState::Closed;
 					case $this->ReadPropertyString("CurrentDoorStateOpening"):
-						return HMCharacteristicValueDoorState::Opening;
+						return 2; //HMCharacteristicValueDoorState::Opening;
 					case $this->ReadPropertyString("CurrentDoorStateClosing"):
-						return HMCharacteristicValueDoorState::Closing;
+						return 3; //HMCharacteristicValueDoorState::Closing;
 					case $this->ReadPropertyString("CurrentDoorStateStopped"):
-						return HMCharacteristicValueDoorState::Stopped;
+						return 4; //HMCharacteristicValueDoorState::Stopped;
 				}
 				break;
 			case 'CurrentTemperature': // value has to be float
@@ -268,6 +268,7 @@ class HomeKitAccessory extends IPSModule {
 	}
 }
 
+/*
 class HMCharacteristicValueDoorState extends SplEnum {
 	const __default = self::Open;
 
@@ -285,6 +286,6 @@ class HMCharacteristicValueHeatingCooling extends SplEnum {
 	const Heat = 1;
 	const Cool = 2;
 	const Auto = 3;
-}
+}*/
 
 ?>
