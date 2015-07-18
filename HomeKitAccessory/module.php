@@ -46,13 +46,13 @@ class HomeKitAccessory extends IPSModule {
 	public function SetPowerState($value) {
 		// get target variable id
 		$variableId = $this->ReadPropertyInteger("PowerStateVariableId");
-		SetTargetVariableValue($variableId, "PowerState", $value);
+		$this->SetTargetVariableValue($variableId, "PowerState", $value);
 	}
 	
 	public function GetPowerState() {
 		// get target variable id
 		$variableId = $this->ReadPropertyInteger("PowerStateVariableId");
-		return GetHomeKitValue($variableId, "PowerState");
+		return $this->GetHomeKitValue($variableId, "PowerState");
 	}
 	
 	/*
@@ -65,13 +65,13 @@ class HomeKitAccessory extends IPSModule {
 		
 		// brightness variable specified?
 		if ($variableId > 0) {
-			SetTargetVariableValue($variableId, "Brightness", $value);
+			$this->SetTargetVariableValue($variableId, "Brightness", $value);
 			return;
 		}
 		
 		// fallback to power state
 		$variableId = $this->ReadPropertyInteger("PowerStateVariableId");
-		SetTargetVariableValue($variableId, "PowerState", $value > 0);
+		$this->SetTargetVariableValue($variableId, "PowerState", $value > 0);
 	}
 	
 	public function GetBrightness() {
@@ -79,11 +79,11 @@ class HomeKitAccessory extends IPSModule {
 		$variableId = $this->ReadPropertyInteger("BrightnessVariableId");
 		
 		// brightness variable specified?
-		if ($variableId > 0) return GetHomeKitValue($variableId, "Brightness");
+		if ($variableId > 0) return $this->GetHomeKitValue($variableId, "Brightness");
 		
 		// fallback to power state
 		$variableId = $this->ReadPropertyInteger("PowerStateVariableId");
-		return GetHomeKitValue($variableId, "PowerState");
+		return $this->GetHomeKitValue($variableId, "PowerState");
 	}
 	
 	/*
@@ -93,20 +93,20 @@ class HomeKitAccessory extends IPSModule {
 	public function SetTargetTemperature($value) {
 		// get target variable id
 		$variableId = $this->ReadPropertyInteger("TargetTemperatureVariableId");
-		$targetValue = GetTargetValue("TargetTemperature", $value);
-		SetTargetVariableValue($variableId, "TargetTemperature", $targetValue);
+		$targetValue = $this->GetTargetValue("TargetTemperature", $value);
+		$this->SetTargetVariableValue($variableId, "TargetTemperature", $targetValue);
 	}
 	
 	public function GetTargetTemperature() {
 		// get target variable id
 		$variableId = $this->ReadPropertyInteger("TargetTemperatureVariableId");
-		return GetHomeKitValue($variableId, "TargetTemperature");
+		return $this->GetHomeKitValue($variableId, "TargetTemperature");
 	}
 	
 	public function GetCurrentTemperature() {
 		// get target variable id
 		$variableId = $this->ReadPropertyInteger("CurrentTemperatureVariableId");
-		return GetHomeKitValue($variableId, "CurrentTemperature");
+		return $this->GetHomeKitValue($variableId, "CurrentTemperature");
 	}
 	
 	/*
@@ -116,20 +116,20 @@ class HomeKitAccessory extends IPSModule {
 	public function SetTargetDoorState($value) {
 		// get target variable id
 		$variableId = $this->ReadPropertyInteger("TargetDoorStateVariableId");
-		$targetValue = GetTargetValue("TargetDoorState", $value);
-		SetTargetVariableValue($variableId, "TargetDoorState", $targetValue);
+		$targetValue = $this->GetTargetValue("TargetDoorState", $value);
+		$this->SetTargetVariableValue($variableId, "TargetDoorState", $targetValue);
 	}
 	
 	public function GetTargetDoorState() {
 		// get target variable id
 		$variableId = $this->ReadPropertyInteger("TargetDoorStateVariableId");
-		return GetHomeKitValue($variableId, "TargetDoorState");
+		return $this->GetHomeKitValue($variableId, "TargetDoorState");
 	}
 	
 	public function GetCurrentDoorState() {
 		// get target variable id
 		$variableId = $this->ReadPropertyInteger("CurrentDoorStateVariableId");
-		return GetHomeKitValue($variableId, "CurrentDoorState");
+		return $this->GetHomeKitValue($variableId, "CurrentDoorState");
 	}
 	
 	
@@ -140,7 +140,7 @@ class HomeKitAccessory extends IPSModule {
 	private function SetTargetVariableValue($variableId, $homeKitVariableType, $homeKitValue) {
 		// get target variable object properties
 		$variableObject = IPS_GetObject($variableId);
-		$targetValue = GetTargetValue($variableId, $homeKitVariableType, $homeKitValue);
+		$targetValue = $this->GetTargetValue($variableId, $homeKitVariableType, $homeKitValue);
 		
 		// request associated action for the specified variable and value
 		IPS_RequestAction($variableObject["ParentID"], $variableObject["ObjectIdent"], $targetValue);
