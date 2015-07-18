@@ -93,8 +93,7 @@ class HomeKitAccessory extends IPSModule {
 	public function SetTargetTemperature($value) {
 		// get target variable id
 		$variableId = $this->ReadPropertyInteger("TargetTemperatureVariableId");
-		$targetValue = $this->GetTargetValue("TargetTemperature", $value);
-		$this->SetTargetVariableValue($variableId, "TargetTemperature", $targetValue);
+		$this->SetTargetVariableValue($variableId, "TargetTemperature", $value);
 	}
 	
 	public function GetTargetTemperature() {
@@ -116,8 +115,7 @@ class HomeKitAccessory extends IPSModule {
 	public function SetTargetDoorState($value) {
 		// get target variable id
 		$variableId = $this->ReadPropertyInteger("TargetDoorStateVariableId");
-		$targetValue = $this->GetTargetValue("TargetDoorState", $value);
-		$this->SetTargetVariableValue($variableId, "TargetDoorState", $targetValue);
+		$this->SetTargetVariableValue($variableId, "TargetDoorState", $value);
 	}
 	
 	public function GetTargetDoorState() {
