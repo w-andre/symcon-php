@@ -1,0 +1,290 @@
+<?
+class HomeKitAccessory extends IPSModule {
+
+	public function __construct($InstanceID) {
+		//Never delete this line!
+		parent::__construct($InstanceID);
+
+		//These lines are parsed on Symcon Startup or Instance creation
+		//You cannot use variables here. Just static values.
+		$this->RegisterPropertyInteger("PowerStateVariableId", 0);
+		$this->RegisterPropertyString("PowerStateValueOn", '1');
+		$this->RegisterPropertyString("PowerStateValueOff", '0');
+		
+		$this->RegisterPropertyInteger("BrightnessVariableId", 0);
+		$this->RegisterPropertyInteger("BrightnessMaxValue", 100);
+		
+		$this->RegisterPropertyInteger("TargetDoorStateVariableId", 0);
+		$this->RegisterPropertyString("TargetDoorStateOpen", '0');
+		$this->RegisterPropertyString("TargetDoorStateClosed", '4');
+		$this->RegisterPropertyString("TargetDoorStateOpening", '0');
+		$this->RegisterPropertyString("TargetDoorStateClosing", '4');
+		$this->RegisterPropertyString("TargetDoorStateStopped", '2');
+		
+		$this->RegisterPropertyInteger("CurrentDoorStateVariableId", 0);
+		$this->RegisterPropertyString("CurrentDoorStateOpen", '0');
+		$this->RegisterPropertyString("CurrentDoorStateClosed", '4');
+		$this->RegisterPropertyString("CurrentDoorStateOpening", '0');
+		$this->RegisterPropertyString("CurrentDoorStateClosing", '4');
+		$this->RegisterPropertyString("CurrentDoorStateStopped", '2');
+		
+		$this->RegisterPropertyInteger("TargetTemperatureVariableId", 0);
+		$this->RegisterPropertyInteger("CurrentTemperatureVariableId", 0);
+	}
+
+	public function ApplyChanges() {
+		//Never delete this line!
+		parent::ApplyChanges();
+	}
+	
+	/*
+		Switch and Light Bulb functions
+	*/
+
+	public function SetPowerState($value) {
+		// get target variable id
+		$variableId = $this->ReadPropertyInteger("PowerStateVariableId");
+		SetTargetVariableValue($variableId, 'PowerState', $value);
+	}
+	
+	public function GetPowerState() {
+		// get target variable id
+		$variableId = $this->ReadPropertyInteger("PowerStateVariableId");
+		return GetHomeKitValue($variableId, 'PowerState');
+	}
+	
+	/*
+		Light Bulb functions
+	*/
+	
+	public function SetBrightness($value) {
+		// get target variable id
+		$variableId = $this->ReadPropertyInteger("BrightnessVariableId");
+		
+		// brightness variable specified?
+		if ($variableId > 0) {
+			SetTargetVariableValue($variableId, 'Brightness', $value);
+			return;
+		}
+		
+		// fallback to power state
+		$variableId = $this->ReadPropertyInteger("PowerStateVariableId");
+		SetTargetVariableValue($variableId, 'PowerState', $value > 0);
+	}
+	
+	public function GetBrightness() {
+		// get target variable id
+		$variableId = $this->ReadPropertyInteger("BrightnessVariableId");
+		
+		// brightness variable specified?
+		if ($variableId > 0) return GetHomeKitValue($variableId, 'Brightness');
+		
+		// fallback to power state
+		$variableId = $this->ReadPropertyInteger("PowerStateVariableId");
+		return GetHomeKitValue($variableId, 'PowerState');
+	}
+	
+	/*
+		Thermostat functions
+	*/
+	
+	public function SetTargetTemperature($value) {
+		// get target variable id
+		$variableId = $this->ReadPropertyInteger("TargetTemperatureVariableId");
+		$targetValue = GetTargetValue('TargetTemperature', $value);
+		SetTargetVariableValue($variableId, 'TargetTemperature', $targetValue);
+	}
+	
+	public function GetTargetTemperature() {
+		// get target variable id
+		$variableId = $this->ReadPropertyInteger("TargetTemperatureVariableId");
+		return GetHomeKitValue($variableId, 'TargetTemperature');
+	}
+	
+	public function GetCurrentTemperature() {
+		// get target variable id
+		$variableId = $this->ReadPropertyInteger("CurrentTemperatureVariableId");
+		return GetHomeKitValue($variableId, 'CurrentTemperature');
+	}
+	
+	/*
+		Garage Door Opener functions
+	*/
+	
+	public function SetTargetDoorState($value) {
+		// get target variable id
+		$variableId = $this->ReadPropertyInteger("TargetDoorStateVariableId");
+		$targetValue = GetTargetValue('TargetDoorState', $value);
+		SetTargetVariableValue($variableId, 'TargetDoorState', $targetValue);
+	}
+	
+	public function GetTargetDoorState() {
+		// get target variable id
+		$variableId = $this->ReadPropertyInteger("TargetDoorStateVariableId");
+		return GetHomeKitValue($variableId, 'TargetDoorState');
+	}
+	
+	public function GetCurrentDoorState() {
+		// get target variable id
+		$variableId = $this->ReadPropertyInteger("CurrentDoorStateVariableId");
+		return GetHomeKitValue($variableId, 'CurrentDoorState');
+	}
+	
+	
+	/*
+		internal functions
+	*/
+	
+	private function SetTargetVariableValue($variableId, $homeKitVariableType, $homeKitValue) {
+		// get target variable object properties
+		$variableObject = IPS_GetObject($variableId);
+		$targetValue = GetTargetValue($variableId, $homeKitVariableType, $homeKitValue);
+		
+		// request associated action for the specified variable and value
+		IPS_RequestAction($variableObject['ParentID'], $variableObject['ObjectIdent'], $targetValue);
+	}
+	
+	private function GetTargetValue($variableId, $homeKitVariableType, $homeKitValue) {
+		$variable = IPS_GetVariable($variableId);
+		
+		$targetValueString = '';
+		switch ($homeKitVariableType) {
+			case 'PowerState':
+				$targetValueString = $homeKitValue 
+					? $this->ReadPropertyString("PowerStateValueOn") 
+					: $this->ReadPropertyString("PowerStateValueOff");
+				break;
+			case 'Brightness':
+				$maxValue = $this->ReadPropertyFloat("BrightnessMaxValue");
+				$targetValue = ($homeKitValue / 100) * $maxValue;
+				return $targetValue;
+			case 'TargetDoorState':
+				switch ($homeKitValue) {
+					case HMCharacteristicValueDoorState::Open:
+						$targetValueString = $this->ReadPropertyString("TargetDoorStateOpen");
+						break;
+					case HMCharacteristicValueDoorState::Closed:
+						$targetValueString = $this->ReadPropertyString("TargetDoorStateClosed");
+						break;
+					case HMCharacteristicValueDoorState::Opening:
+						$targetValueString = $this->ReadPropertyString("TargetDoorStateOpening");
+						break;
+					case HMCharacteristicValueDoorState::Closing:
+						$targetValueString = $this->ReadPropertyString("TargetDoorStateClosing");
+						break;
+					case HMCharacteristicValueDoorState::Stopped:
+						$targetValueString = $this->ReadPropertyString("TargetDoorStateStopped");
+						break;
+				}
+				break;
+			case 'CurrentDoorState':
+				switch ($homeKitValue) {
+					case HMCharacteristicValueDoorState::Open:
+						$targetValueString = $this->ReadPropertyString("CurrentDoorStateOpen");
+						break;
+					case HMCharacteristicValueDoorState::Closed:
+						$targetValueString = $this->ReadPropertyString("CurrentDoorStateClosed");
+						break;
+					case HMCharacteristicValueDoorState::Opening:
+						$targetValueString = $this->ReadPropertyString("CurrentDoorStateOpening");
+						break;
+					case HMCharacteristicValueDoorState::Closing:
+						$targetValueString = $this->ReadPropertyString("CurrentDoorStateClosing");
+						break;
+					case HMCharacteristicValueDoorState::Stopped:
+						$targetValueString = $this->ReadPropertyString("CurrentDoorStateStopped");
+						break;
+				}
+				break;
+			case 'CurrentTemperature': // value has to be float
+			case 'TargetTemperature': // value has to be float
+			default:
+				return $homeKitValue;
+		}
+		
+		if ($targetValueString == '') return $homeKitValue;
+		
+		switch ($variable['VariableType']) {
+			case 0: // boolean
+				return boolval($targetValueString);
+			case 1: // integer
+				return intval($targetValueString);
+			case 2: // float
+				return floatval($targetValueString);
+			case 3: // string
+				return $targetValueString;
+			default:
+				return $homeKitValue;
+		}
+	}
+	
+	private function GetHomeKitValue($variableId, $homeKitVariableType) {
+		$variable = IPS_GetVariable($variableId);
+		$value = GetValue($variableId);
+		$valueString = strval($value);
+		
+		switch ($homeKitVariableType) {
+			case 'PowerState':
+				return $valueString == $this->ReadPropertyString("PowerStateValueOn");
+			case 'Brightness':
+				$maxValue = $this->ReadPropertyFloat("BrightnessMaxValue");
+				$targetValue = ($value / $maxValue) * 100;
+				return $targetValue;
+			case 'TargetDoorState':
+				switch ($valueString) {
+					case $this->ReadPropertyString("TargetDoorStateOpen"):
+						return HMCharacteristicValueDoorState::Open;
+					case $this->ReadPropertyString("TargetDoorStateClosed"):
+						return HMCharacteristicValueDoorState::Closed;
+					case $this->ReadPropertyString("TargetDoorStateOpening"):
+						return HMCharacteristicValueDoorState::Opening;
+					case $this->ReadPropertyString("TargetDoorStateClosing"):
+						return HMCharacteristicValueDoorState::Closing;
+					case $this->ReadPropertyString("TargetDoorStateStopped"):
+						return HMCharacteristicValueDoorState::Stopped;
+				}
+				break;
+			case 'DoorState':
+				switch ($valueString) {
+					case $this->ReadPropertyString("CurrentDoorStateOpen"):
+						return HMCharacteristicValueDoorState::Open;
+					case $this->ReadPropertyString("CurrentDoorStateClosed"):
+						return HMCharacteristicValueDoorState::Closed;
+					case $this->ReadPropertyString("CurrentDoorStateOpening"):
+						return HMCharacteristicValueDoorState::Opening;
+					case $this->ReadPropertyString("CurrentDoorStateClosing"):
+						return HMCharacteristicValueDoorState::Closing;
+					case $this->ReadPropertyString("CurrentDoorStateStopped"):
+						return HMCharacteristicValueDoorState::Stopped;
+				}
+				break;
+			case 'CurrentTemperature': // value has to be float
+			case 'TargetTemperature': // value has to be float
+			default:
+				return $value;
+		}
+		
+		return $value;
+	}
+}
+
+class HMCharacteristicValueDoorState extends SplEnum {
+	const __default = self::Open;
+
+	const Open = 0;
+	const Closed = 1;
+	const Opening = 2;
+	const Closing = 3;
+	const Stopped = 4;
+}
+
+class HMCharacteristicValueHeatingCooling extends SplEnum {
+	const __default = self::Off;
+
+	const Off = 0;
+	const Heat = 1;
+	const Cool = 2;
+	const Auto = 3;
+}
+
+?>

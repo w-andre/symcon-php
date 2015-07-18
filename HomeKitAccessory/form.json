@@ -1,0 +1,40 @@
+{
+	"elements": [
+		{ "type": "Select", "name": "DeviceType", "caption": "Type", "options": [
+			{ "label": "Switch", "value": 0 },
+			{ "label": "Light Bulb", "value": 1 },
+			{ "label": "Garage Door Opener", "value": 2 },
+			{ "label": "Thermostat", "value": 3 },
+			{ "label": "Window Covering (not implemented)", "value": 4 }
+		] },
+		
+		{ "type": "Label", "label": "Switch and Light Bulb variables" },
+		{ "type": "SelectVariable", "name": "PowerStateVariableId", "caption": "PowerState" },
+		{ "type": "ValidationTextBox", "name": "PowerStateValueOn", "caption": "PowerState: Value On" },
+		{ "type": "ValidationTextBox", "name": "PowerStateValueOff", "caption": "PowerState: Value Off" },
+		
+		{ "type": "Label", "label": "Light Bulb variables" },
+		{ "type": "SelectVariable", "name": "BrightnessVariableId", "caption": "Brightness" },
+		{ "type": "ValidationTextBox", "name": "BrightnessMaxValue", "caption": "Max. Brightness Value" },
+		
+		{ "type": "Label", "label": "Garage Door Opener variables" },
+		{ "type": "SelectVariable", "name": "TargetDoorStateVariableId", "caption": "Target Door State" },
+		{ "type": "ValidationTextBox", "name": "TargetDoorStateOpen", "caption": "Target Door State: Value Open" },
+		{ "type": "ValidationTextBox", "name": "TargetDoorStateClosed", "caption": "Target Door State: Value Closed" },
+		{ "type": "ValidationTextBox", "name": "TargetDoorStateOpening", "caption": "Target Door State: Value Opening" },
+		{ "type": "ValidationTextBox", "name": "TargetDoorStateClosing", "caption": "Target Door State: Value Closing" },
+		{ "type": "ValidationTextBox", "name": "TargetDoorStateStopped", "caption": "Target Door State: Value Stopped" },
+		{ "type": "SelectVariable", "name": "CurrentDoorStateVariableId", "caption": "Current Door State" },
+		{ "type": "ValidationTextBox", "name": "CurrentDoorStateOpen", "caption": "Current Door State: Value Open" },
+		{ "type": "ValidationTextBox", "name": "CurrentDoorStateClosed", "caption": "Current Door State: Value Closed" },
+		{ "type": "ValidationTextBox", "name": "CurrentDoorStateOpening", "caption": "Current Door State: Value Opening" },
+		{ "type": "ValidationTextBox", "name": "CurrentDoorStateClosing", "caption": "Current Door State: Value Closing" },
+		{ "type": "ValidationTextBox", "name": "CurrentDoorStateStopped", "caption": "Current Door State: Value Stopped" },
+		
+		{ "type": "Label", "label": "Thermostat variables" },
+		{ "type": "SelectVariable", "name": "TargetTemperatureVariableId", "caption": "Target Temperature" },
+		{ "type": "SelectVariable", "name": "CurrentTemperatureVariableId", "caption": "Current Temperature" }
+	],
+	"actions": [
+	]
+}
