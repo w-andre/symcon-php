@@ -10,8 +10,8 @@
 		
 		{ "type": "Label", "label": "Switch and Light Bulb variables" },
 		{ "type": "SelectVariable", "name": "PowerStateVariableId", "caption": "PowerState" },
-		{ "type": "ValidationTextBox", "name": "PowerStateValueOn", "caption": "Value On" },
-		{ "type": "ValidationTextBox", "name": "PowerStateValueOff", "caption": "Value Off" },
+		{ "type": "ValidationTextBox", "name": "PowerStateOn", "caption": "Value On" },
+		{ "type": "ValidationTextBox", "name": "PowerStateOff", "caption": "Value Off" },
 		
 		{ "type": "Label", "label": "Light Bulb variables" },
 		{ "type": "SelectVariable", "name": "BrightnessVariableId", "caption": "Brightness" },
