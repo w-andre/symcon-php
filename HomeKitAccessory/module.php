@@ -82,8 +82,9 @@ class HomeKitAccessory extends IPSModule {
 		if ($variableId > 0) return $this->GetHomeKitValue($variableId, "Brightness");
 		
 		// fallback to power state
+		IPS_LogMessage("HomeKit Accessory", "Warning: No brightness variable specified! Using PowerState variable...");
 		$variableId = $this->ReadPropertyInteger("PowerStateVariableId");
-		return $this->GetHomeKitValue($variableId, "PowerState");
+		return $this->GetHomeKitValue($variableId, "PowerState") ? 100 : 0;
 	}
 	
 	/*
