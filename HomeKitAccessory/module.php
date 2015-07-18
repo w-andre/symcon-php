@@ -44,36 +44,36 @@ class HomeKitAccessory extends IPSModule {
 		// update variables for current device type
 		switch ($deviceType) {
 			case 0: // switch
-				$this->MaintainVariable("PowerState", "PowerState", 0, "~Switch", 10, true);
+				$this->MaintainVariable("PowerState", "Power State", 0, "~Switch", 10, true);
 				$this->MaintainVariable("Brightness", "Brightness", 1, "~Intensity.100", 20, false);
-				$this->MaintainVariable("Target Door State", "TargetDoorState", 1, "", 30, false);
-				$this->MaintainVariable("Current Door State", "CurrentDoorState", 1, "", 40, false);
-				$this->MaintainVariable("Target Temperature", "TargetTemperature", 2, "", 50, false);
-				$this->MaintainVariable("Current Temperature", "CurrentTemperature", 2, "", 60, false);
+				$this->MaintainVariable("TargetDoorState", "Target Door State", 1, "", 30, false);
+				$this->MaintainVariable("CurrentDoorState", "Current Door State", 1, "", 40, false);
+				$this->MaintainVariable("TargetTemperature", "Target Temperature", 2, "", 50, false);
+				$this->MaintainVariable("CurrentTemperature", "Current Temperature", 2, "", 60, false);
 				break;
 			case 1: // light bulb
-				$this->MaintainVariable("PowerState", "PowerState", 0, "~Switch", 10, true);
+				$this->MaintainVariable("PowerState", "Power State", 0, "~Switch", 10, true);
 				$this->MaintainVariable("Brightness", "Brightness", 1, "~Intensity.100", 20, true);
-				$this->MaintainVariable("Target Door State", "TargetDoorState", 1, "", 30, false);
-				$this->MaintainVariable("Current Door State", "CurrentDoorState", 1, "", 40, false);
-				$this->MaintainVariable("Target Temperature", "TargetTemperature", 2, "", 50, false);
-				$this->MaintainVariable("Current Temperature", "CurrentTemperature", 2, "", 60, false);
+				$this->MaintainVariable("Target Door State", "Target Door State", 1, "", 30, false);
+				$this->MaintainVariable("Current Door State", "Current Door State", 1, "", 40, false);
+				$this->MaintainVariable("Target Temperature", "Target Temperature", 2, "", 50, false);
+				$this->MaintainVariable("Current Temperature", "Current Temperature", 2, "", 60, false);
 				break;
 			case 2: // garage door opener
-				$this->MaintainVariable("PowerState", "PowerState", 0, "~Switch", 10, false);
+				$this->MaintainVariable("PowerState", "Power State", 0, "~Switch", 10, false);
 				$this->MaintainVariable("Brightness", "Brightness", 1, "~Intensity.100", 20, false);
-				$this->MaintainVariable("Target Door State", "TargetDoorState", 1, "", 30, true);
-				$this->MaintainVariable("Current Door State", "CurrentDoorState", 1, "", 40, true);
-				$this->MaintainVariable("Target Temperature", "TargetTemperature", 2, "", 50, false);
-				$this->MaintainVariable("Current Temperature", "CurrentTemperature", 2, "", 60, false);
+				$this->MaintainVariable("TargetDoorState", "Target Door State", 1, "", 30, true);
+				$this->MaintainVariable("CurrentDoorState", "Current Door State", 1, "", 40, true);
+				$this->MaintainVariable("TargetTemperature", "Target Temperature", 2, "", 50, false);
+				$this->MaintainVariable("CurrentTemperature", "Current Temperature", 2, "", 60, false);
 				break;
 			case 3: // thermostat
 				$this->MaintainVariable("PowerState", "PowerState", 0, "~Switch", 10, false);
 				$this->MaintainVariable("Brightness", "Brightness", 1, "~Intensity.100", 20, false);
-				$this->MaintainVariable("Target Door State", "TargetDoorState", 1, "", 30, false);
-				$this->MaintainVariable("Current Door State", "CurrentDoorState", 1, "", 40, false);
-				$this->MaintainVariable("Target Temperature", "TargetTemperature", 2, "", 50, true);
-				$this->MaintainVariable("Current Temperature", "CurrentTemperature", 2, "", 60, true);
+				$this->MaintainVariable("TargetDoorState", "Target Door State", 1, "", 30, false);
+				$this->MaintainVariable("CurrentDoorState", "Current Door State", 1, "", 40, false);
+				$this->MaintainVariable("TargetTemperature", "Target Temperature", 2, "", 50, true);
+				$this->MaintainVariable("CurrentTemperature", "Current Temperature", 2, "", 60, true);
 				break;
 		}
 	}
