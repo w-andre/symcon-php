@@ -37,6 +37,45 @@ class HomeKitAccessory extends IPSModule {
 	public function ApplyChanges() {
 		//Never delete this line!
 		parent::ApplyChanges();
+		
+		// get current device type
+		$deviceType = $this->ReadPropertyInteger("DeviceType");
+
+		// update variables for current device type
+		switch ($deviceType) {
+			case 0: // switch
+				$this->MaintainVariable("PowerState", "PowerState", 0, "~Switch", 10, true);
+				$this->MaintainVariable("Brightness", "Brightness", 1, "~Intensity.100", 20, false);
+				$this->MaintainVariable("Target Door State", "TargetDoorState", 1, "", 30, false);
+				$this->MaintainVariable("Current Door State", "CurrentDoorState", 1, "", 40, false);
+				$this->MaintainVariable("Target Temperature", "TargetTemperature", 2, "", 50, false);
+				$this->MaintainVariable("Current Temperature", "CurrentTemperature", 2, "", 60, false);
+				break;
+			case 1: // light bulb
+				$this->MaintainVariable("PowerState", "PowerState", 0, "~Switch", 10, true);
+				$this->MaintainVariable("Brightness", "Brightness", 1, "~Intensity.100", 20, true);
+				$this->MaintainVariable("Target Door State", "TargetDoorState", 1, "", 30, false);
+				$this->MaintainVariable("Current Door State", "CurrentDoorState", 1, "", 40, false);
+				$this->MaintainVariable("Target Temperature", "TargetTemperature", 2, "", 50, false);
+				$this->MaintainVariable("Current Temperature", "CurrentTemperature", 2, "", 60, false);
+				break;
+			case 2: // garage door opener
+				$this->MaintainVariable("PowerState", "PowerState", 0, "~Switch", 10, false);
+				$this->MaintainVariable("Brightness", "Brightness", 1, "~Intensity.100", 20, false);
+				$this->MaintainVariable("Target Door State", "TargetDoorState", 1, "", 30, true);
+				$this->MaintainVariable("Current Door State", "CurrentDoorState", 1, "", 40, true);
+				$this->MaintainVariable("Target Temperature", "TargetTemperature", 2, "", 50, false);
+				$this->MaintainVariable("Current Temperature", "CurrentTemperature", 2, "", 60, false);
+				break;
+			case 3: // thermostat
+				$this->MaintainVariable("PowerState", "PowerState", 0, "~Switch", 10, false);
+				$this->MaintainVariable("Brightness", "Brightness", 1, "~Intensity.100", 20, false);
+				$this->MaintainVariable("Target Door State", "TargetDoorState", 1, "", 30, false);
+				$this->MaintainVariable("Current Door State", "CurrentDoorState", 1, "", 40, false);
+				$this->MaintainVariable("Target Temperature", "TargetTemperature", 2, "", 50, true);
+				$this->MaintainVariable("Current Temperature", "CurrentTemperature", 2, "", 60, true);
+				break;
+		}
 	}
 	
 	/*
@@ -48,17 +87,18 @@ class HomeKitAccessory extends IPSModule {
 		$variableId = $this->ReadPropertyInteger("PowerStateVariableId");
 		$this->SetTargetVariableValue($variableId, "PowerState", $value);
 	}
-	
+
 	public function GetPowerState() {
 		// get target variable id
 		$variableId = $this->ReadPropertyInteger("PowerStateVariableId");
-		return $this->GetHomeKitValue($variableId, "PowerState");
+		$value = $this->GetHomeKitValue($variableId, "PowerState");
+		SetValueBoolean($this->GetIDForIdent("PowerState"), $value);
 	}
-	
+
 	/*
 		Light Bulb functions
 	*/
-	
+
 	public function SetBrightness($value) {
 		// get target variable id
 		$variableId = $this->ReadPropertyInteger("BrightnessVariableId");
@@ -73,69 +113,75 @@ class HomeKitAccessory extends IPSModule {
 		$variableId = $this->ReadPropertyInteger("PowerStateVariableId");
 		$this->SetTargetVariableValue($variableId, "PowerState", $value > 0);
 	}
-	
+
 	public function GetBrightness() {
 		// get target variable id
 		$variableId = $this->ReadPropertyInteger("BrightnessVariableId");
+		$value = -1;
 		
 		// brightness variable specified?
-		if ($variableId > 0) return $this->GetHomeKitValue($variableId, "Brightness");
-		
-		// fallback to power state
-		IPS_LogMessage("HomeKit Accessory", "Warning: No brightness variable specified! Using PowerState variable...");
-		$variableId = $this->ReadPropertyInteger("PowerStateVariableId");
-		return $this->GetHomeKitValue($variableId, "PowerState") ? 100 : 0;
+		if ($variableId > 0) {
+			$value = $this->GetHomeKitValue($variableId, "Brightness");
+		} else {
+			// fallback to power state
+			$variableId = $this->ReadPropertyInteger("PowerStateVariableId");
+			$value =  $this->GetHomeKitValue($variableId, "PowerState") ? 100 : 0;
+		}
+		SetValueInteger($this->GetIDForIdent("Brightness"), $value);
 	}
-	
+
 	/*
 		Thermostat functions
 	*/
-	
+
 	public function SetTargetTemperature($value) {
 		// get target variable id
 		$variableId = $this->ReadPropertyInteger("TargetTemperatureVariableId");
 		$this->SetTargetVariableValue($variableId, "TargetTemperature", $value);
 	}
-	
+
 	public function GetTargetTemperature() {
 		// get target variable id
 		$variableId = $this->ReadPropertyInteger("TargetTemperatureVariableId");
-		return $this->GetHomeKitValue($variableId, "TargetTemperature");
+		$value = $this->GetHomeKitValue($variableId, "TargetTemperature");
+		SetValueFloat($this->GetIDForIdent("TargetTemperature"), $value);
 	}
-	
+
 	public function GetCurrentTemperature() {
 		// get target variable id
 		$variableId = $this->ReadPropertyInteger("CurrentTemperatureVariableId");
-		return $this->GetHomeKitValue($variableId, "CurrentTemperature");
+		$value = $this->GetHomeKitValue($variableId, "CurrentTemperature");
+		SetValueFloat($this->GetIDForIdent("CurrentTemperature"), $value);
 	}
-	
+
 	/*
 		Garage Door Opener functions
 	*/
-	
+
 	public function SetTargetDoorState($value) {
 		// get target variable id
 		$variableId = $this->ReadPropertyInteger("TargetDoorStateVariableId");
 		$this->SetTargetVariableValue($variableId, "TargetDoorState", $value);
 	}
-	
+
 	public function GetTargetDoorState() {
 		// get target variable id
 		$variableId = $this->ReadPropertyInteger("TargetDoorStateVariableId");
-		return $this->GetHomeKitValue($variableId, "TargetDoorState");
+		$value = $this->GetHomeKitValue($variableId, "TargetDoorState");
+		SetValueInteger($this->GetIDForIdent("TargetDoorState"), $value);
 	}
-	
+
 	public function GetCurrentDoorState() {
 		// get target variable id
 		$variableId = $this->ReadPropertyInteger("CurrentDoorStateVariableId");
-		return $this->GetHomeKitValue($variableId, "CurrentDoorState");
+		$value = $this->GetHomeKitValue($variableId, "CurrentDoorState");
+		SetValueInteger($this->GetIDForIdent("CurrentDoorState"), $value);
 	}
-	
-	
+
 	/*
 		internal functions
 	*/
-	
+
 	private function SetTargetVariableValue($variableId, $homeKitVariableType, $homeKitValue) {
 		// get target variable object properties
 		$variableObject = IPS_GetObject($variableId);
@@ -144,7 +190,7 @@ class HomeKitAccessory extends IPSModule {
 		// request associated action for the specified variable and value
 		IPS_RequestAction($variableObject["ParentID"], $variableObject["ObjectIdent"], $targetValue);
 	}
-	
+
 	private function GetTargetValue($variableId, $homeKitVariableType, $homeKitValue) {
 		$variable = IPS_GetVariable($variableId);
 		
@@ -219,7 +265,7 @@ class HomeKitAccessory extends IPSModule {
 				return $homeKitValue;
 		}
 	}
-	
+
 	private function GetHomeKitValue($variableId, $homeKitVariableType) {
 		$variable = IPS_GetVariable($variableId);
 		$value = GetValue($variableId);
