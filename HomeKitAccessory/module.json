@@ -3,7 +3,7 @@
 	"name" : "HomeKit Accessory",
 	"type" : 3,
 	"vendor" : "Apple",
-	"aliases" : ["HomeKit Accessory"],
+	"aliases" : ["HomeKitAccessory"],
 	"parentRequirements" : [],
 	"childRequirements" : [],
 	"implemented" : [],
