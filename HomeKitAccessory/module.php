@@ -157,7 +157,8 @@ class HomeKitAccessory extends IPSModule {
 			case "Brightness":
 				$maxValue = $this->ReadPropertyFloat("BrightnessMaxValue");
 				$targetValue = ($homeKitValue / 100) * $maxValue;
-				return $targetValue;
+				$targetValueString = strval($targetValue);
+				break;
 			case "TargetDoorState":
 				switch ($homeKitValue) {
 					case 0: //HMCharacteristicValueDoorState::Open
@@ -199,7 +200,7 @@ class HomeKitAccessory extends IPSModule {
 			case "CurrentTemperature": // value has to be float
 			case "TargetTemperature": // value has to be float
 			default:
-				return $homeKitValue;
+				$targetValueString = strval($homeKitValue);
 		}
 		
 		if ($targetValueString == "") return $homeKitValue;
@@ -229,7 +230,7 @@ class HomeKitAccessory extends IPSModule {
 			case "Brightness":
 				$maxValue = $this->ReadPropertyFloat("BrightnessMaxValue");
 				$targetValue = ($value / $maxValue) * 100;
-				return $targetValue;
+				return intval($targetValue);
 			case "TargetDoorState":
 				switch ($valueString) {
 					case $this->ReadPropertyString("TargetDoorStateOpen"):
@@ -260,8 +261,7 @@ class HomeKitAccessory extends IPSModule {
 				break;
 			case "CurrentTemperature": // value has to be float
 			case "TargetTemperature": // value has to be float
-			default:
-				return $value;
+				return floatval($value);
 		}
 		
 		return $value;
