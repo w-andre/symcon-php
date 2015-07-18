@@ -15,7 +15,7 @@
 		
 		{ "type": "Label", "label": "Light Bulb variables" },
 		{ "type": "SelectVariable", "name": "BrightnessVariableId", "caption": "Brightness" },
-		{ "type": "ValidationTextBox", "name": "BrightnessMaxValue", "caption": "Max. Value" },
+		{ "type": "NumberSpinner", "name": "BrightnessMaxValue", "caption": "Max. Value", "digits": 2},
 		
 		{ "type": "Label", "label": "Garage Door Opener variables" },
 		{ "type": "SelectVariable", "name": "TargetDoorStateVariableId", "caption": "Target Door State" },

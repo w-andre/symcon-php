@@ -14,7 +14,7 @@ class HomeKitAccessory extends IPSModule {
 		$this->RegisterPropertyString("PowerStateOff", "0");
 		
 		$this->RegisterPropertyInteger("BrightnessVariableId", 0);
-		$this->RegisterPropertyInteger("BrightnessMaxValue", 100);
+		$this->RegisterPropertyFloat("BrightnessMaxValue", 100);
 		
 		$this->RegisterPropertyInteger("TargetDoorStateVariableId", 0);
 		$this->RegisterPropertyString("TargetDoorStateOpen", "0");
