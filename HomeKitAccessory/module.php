@@ -7,6 +7,8 @@ class HomeKitAccessory extends IPSModule {
 
 		//These lines are parsed on Symcon Startup or Instance creation
 		//You cannot use variables here. Just static values.
+		$this->RegisterPropertyInteger("DeviceType", 0);
+		
 		$this->RegisterPropertyInteger("PowerStateVariableId", 0);
 		$this->RegisterPropertyString("PowerStateOn", "1");
 		$this->RegisterPropertyString("PowerStateOff", "0");
