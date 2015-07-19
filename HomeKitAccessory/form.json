@@ -5,8 +5,7 @@
 			{ "label": "Light Bulb", "value": 1 },
 			{ "label": "Garage Door Opener", "value": 2 },
 			{ "label": "Thermostat", "value": 3 },
-			{ "label": "Lock Mechanism", "value": 4 },
-			{ "label": "Window Covering (not implemented)", "value": 5 }
+			{ "label": "Lock Mechanism", "value": 4 }
 		] },
 		
 		{ "type": "Label", "label": "Switch and Light Bulb variables" },
@@ -46,7 +45,7 @@
 		{ "type": "ValidationTextBox", "name": "CurrentLockMechanismStateUnsecured", "caption": "Value Unsecured" },
 		{ "type": "ValidationTextBox", "name": "CurrentLockMechanismStateSecured", "caption": "Value Secured" },
 		{ "type": "ValidationTextBox", "name": "CurrentLockMechanismStateJammed", "caption": "Value Jammed" },
-		{ "type": "ValidationTextBox", "name": "CurrentLockMechanismStateUnknown", "caption": "Value Unknown" },
+		{ "type": "ValidationTextBox", "name": "CurrentLockMechanismStateUnknown", "caption": "Value Unknown" }
 	],
 	"actions": [
 	]
