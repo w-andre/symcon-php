@@ -32,6 +32,19 @@ class HomeKitAccessory extends IPSModule {
 		
 		$this->RegisterPropertyInteger("TargetTemperatureVariableId", 0);
 		$this->RegisterPropertyInteger("CurrentTemperatureVariableId", 0);
+		
+		
+		$this->RegisterPropertyInteger("TargetLockMechanismStateVariableId", 0);
+		$this->RegisterPropertyInteger("TargetLockMechanismStateUnsecured", 0);
+		$this->RegisterPropertyInteger("TargetLockMechanismStateSecured", 1);
+		$this->RegisterPropertyInteger("TargetLockMechanismStateJammed", 2);
+		$this->RegisterPropertyInteger("TargetLockMechanismStateUnknown", 3);
+		
+		$this->RegisterPropertyInteger("CurrentLockMechanismStateVariableId", 0);
+		$this->RegisterPropertyInteger("CurrentLockMechanismStateUnsecured", 0);
+		$this->RegisterPropertyInteger("CurrentLockMechanismStateSecured", 1);
+		$this->RegisterPropertyInteger("CurrentLockMechanismStateJammed", 2);
+		$this->RegisterPropertyInteger("CurrentLockMechanismStateUnknown", 3);
 	}
 
 	public function ApplyChanges() {
@@ -44,6 +57,13 @@ class HomeKitAccessory extends IPSModule {
 				Array(2, "Opening", "", -1),
 				Array(3, "Closing", "", -1),
 				Array(4, "Stopped", "", -1)
+		));
+		
+		$this->RegisterProfileIntegerEx("LockMechanismSate.HomeKit", "LockClosed", "", "", Array(
+				Array(0, "Unsecured", "LockOpen", 65280),
+				Array(1, "Secured", "LockClosed", 16711680),
+				Array(2, "Jammed", "", -1),
+				Array(3, "Unknown", "", -1)
 		));
 		
 		// get current device type
@@ -82,6 +102,16 @@ class HomeKitAccessory extends IPSModule {
 				$this->MaintainVariable("CurrentDoorState", "Current Door State", 1, "DoorState.HomeKit", 40, false);
 				$this->MaintainVariable("TargetTemperature", "Target Temperature", 2, "~Temperature", 50, true);
 				$this->MaintainVariable("CurrentTemperature", "Current Temperature", 2, "~Temperature", 60, true);
+				break;
+			case 4: // lock mechanism
+				$this->MaintainVariable("PowerState", "Power State", 0, "~Switch", 10, false);
+				$this->MaintainVariable("Brightness", "Brightness", 1, "~Intensity.100", 20, false);
+				$this->MaintainVariable("TargetDoorState", "Target Door State", 1, "DoorState.HomeKit", 30, false);
+				$this->MaintainVariable("CurrentDoorState", "Current Door State", 1, "DoorState.HomeKit", 40, false);
+				$this->MaintainVariable("TargetTemperature", "Target Temperature", 2, "~Temperature", 50, false);
+				$this->MaintainVariable("CurrentTemperature", "Current Temperature", 2, "~Temperature", 60, false);
+				$this->MaintainVariable("TargetLockMechanismState", "Target Lock Mechanism State", 1, "LockMechanismSate.HomeKit", 70, true);
+				$this->MaintainVariable("CurrentLockMechanismState", "Current Lock Mechanism State", 1, "LockMechanismSate.HomeKit", 80, true);
 				break;
 		}
 	}
@@ -189,6 +219,31 @@ class HomeKitAccessory extends IPSModule {
 		$variableId = $this->ReadPropertyInteger("CurrentDoorStateVariableId");
 		$value = $this->GetHomeKitValue($variableId, "CurrentDoorState");
 		SetValueInteger($this->GetIDForIdent("CurrentDoorState"), $value);
+	}
+
+	/*
+		Lock Mechanism functions
+	*/
+
+	public function SetTargetLockMechanismState($value) {
+		// get target variable id
+		$variableId = $this->ReadPropertyInteger("TargetLockMechanismVariableId");
+		$this->SetTargetVariableValue($variableId, "TargetLockMechanism", $value);
+		SetValueInteger($this->GetIDForIdent("TargetLockMechanism"), $value);
+	}
+
+	public function GetTargetLockMechanismState() {
+		// get target variable id
+		$variableId = $this->ReadPropertyInteger("TargetLockMechanismVariableId");
+		$value = $this->GetHomeKitValue($variableId, "TargetLockMechanism");
+		SetValueInteger($this->GetIDForIdent("TargetLockMechanism"), $value);
+	}
+
+	public function GetCurrentLockMechanismState() {
+		// get target variable id
+		$variableId = $this->ReadPropertyInteger("CurrentLockMechanismStateVariableId");
+		$value = $this->GetHomeKitValue($variableId, "CurrentLockMechanismState");
+		SetValueInteger($this->GetIDForIdent("CurrentLockMechanismState"), $value);
 	}
 
 	/*

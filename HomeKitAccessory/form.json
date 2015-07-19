@@ -5,7 +5,8 @@
 			{ "label": "Light Bulb", "value": 1 },
 			{ "label": "Garage Door Opener", "value": 2 },
 			{ "label": "Thermostat", "value": 3 },
-			{ "label": "Window Covering (not implemented)", "value": 4 }
+			{ "label": "Lock Mechanism", "value": 4 },
+			{ "label": "Window Covering (not implemented)", "value": 5 }
 		] },
 		
 		{ "type": "Label", "label": "Switch and Light Bulb variables" },
@@ -34,6 +35,18 @@
 		{ "type": "Label", "label": "Thermostat variables" },
 		{ "type": "SelectVariable", "name": "TargetTemperatureVariableId", "caption": "Target Temperature" },
 		{ "type": "SelectVariable", "name": "CurrentTemperatureVariableId", "caption": "Current Temperature" }
+		
+		{ "type": "Label", "label": "Lock Mechanism variables" },
+		{ "type": "SelectVariable", "name": "TargetLockMechanismStateVariableId", "caption": "Target Lock Mechanism State" },
+		{ "type": "ValidationTextBox", "name": "TargetLockMechanismStateUnsecured", "caption": "Value Unsecured" },
+		{ "type": "ValidationTextBox", "name": "TargetLockMechanismStateSecured", "caption": "Value Secured" },
+		{ "type": "ValidationTextBox", "name": "TargetLockMechanismStateJammed", "caption": "Value Jammed" },
+		{ "type": "ValidationTextBox", "name": "TargetLockMechanismStateUnknown", "caption": "Value Unknown" },
+		{ "type": "SelectVariable", "name": "CurrentLockMechanismStateVariableId", "caption": "Current Lock Mechanism State" },
+		{ "type": "ValidationTextBox", "name": "CurrentLockMechanismStateUnsecured", "caption": "Value Unsecured" },
+		{ "type": "ValidationTextBox", "name": "CurrentLockMechanismStateSecured", "caption": "Value Secured" },
+		{ "type": "ValidationTextBox", "name": "CurrentLockMechanismStateJammed", "caption": "Value Jammed" },
+		{ "type": "ValidationTextBox", "name": "CurrentLockMechanismStateUnknown", "caption": "Value Unknown" },
 	],
 	"actions": [
 	]
