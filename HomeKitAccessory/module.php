@@ -38,6 +38,14 @@ class HomeKitAccessory extends IPSModule {
 		//Never delete this line!
 		parent::ApplyChanges();
 		
+		$this->RegisterProfileIntegerEx("DoorState.HomeKit", "Shutter", "", "", Array(
+				Array(0, "Open", "", 65280),
+				Array(1, "Closed", "", 16711680),
+				Array(2, "Opening", "", -1),
+				Array(3, "Closing", "", -1),
+				Array(4, "Stopped", "", -1)
+		));
+		
 		// get current device type
 		$deviceType = $this->ReadPropertyInteger("DeviceType");
 
@@ -46,34 +54,34 @@ class HomeKitAccessory extends IPSModule {
 			case 0: // switch
 				$this->MaintainVariable("PowerState", "Power State", 0, "~Switch", 10, true);
 				$this->MaintainVariable("Brightness", "Brightness", 1, "~Intensity.100", 20, false);
-				$this->MaintainVariable("TargetDoorState", "Target Door State", 1, "", 30, false);
-				$this->MaintainVariable("CurrentDoorState", "Current Door State", 1, "", 40, false);
-				$this->MaintainVariable("TargetTemperature", "Target Temperature", 2, "", 50, false);
-				$this->MaintainVariable("CurrentTemperature", "Current Temperature", 2, "", 60, false);
+				$this->MaintainVariable("TargetDoorState", "Target Door State", 1, "DoorState.HomeKit", 30, false);
+				$this->MaintainVariable("CurrentDoorState", "Current Door State", 1, "DoorState.HomeKit", 40, false);
+				$this->MaintainVariable("TargetTemperature", "Target Temperature", 2, "~Temperature", 50, false);
+				$this->MaintainVariable("CurrentTemperature", "Current Temperature", 2, "~Temperature", 60, false);
 				break;
 			case 1: // light bulb
 				$this->MaintainVariable("PowerState", "Power State", 0, "~Switch", 10, true);
 				$this->MaintainVariable("Brightness", "Brightness", 1, "~Intensity.100", 20, true);
-				$this->MaintainVariable("Target Door State", "Target Door State", 1, "", 30, false);
-				$this->MaintainVariable("Current Door State", "Current Door State", 1, "", 40, false);
-				$this->MaintainVariable("Target Temperature", "Target Temperature", 2, "", 50, false);
-				$this->MaintainVariable("Current Temperature", "Current Temperature", 2, "", 60, false);
+				$this->MaintainVariable("Target Door State", "Target Door State", 1, "DoorState.HomeKit", 30, false);
+				$this->MaintainVariable("Current Door State", "Current Door State", 1, "DoorState.HomeKit", 40, false);
+				$this->MaintainVariable("Target Temperature", "Target Temperature", 2, "~Temperature", 50, false);
+				$this->MaintainVariable("Current Temperature", "Current Temperature", 2, "~Temperature", 60, false);
 				break;
 			case 2: // garage door opener
 				$this->MaintainVariable("PowerState", "Power State", 0, "~Switch", 10, false);
 				$this->MaintainVariable("Brightness", "Brightness", 1, "~Intensity.100", 20, false);
-				$this->MaintainVariable("TargetDoorState", "Target Door State", 1, "", 30, true);
-				$this->MaintainVariable("CurrentDoorState", "Current Door State", 1, "", 40, true);
-				$this->MaintainVariable("TargetTemperature", "Target Temperature", 2, "", 50, false);
-				$this->MaintainVariable("CurrentTemperature", "Current Temperature", 2, "", 60, false);
+				$this->MaintainVariable("TargetDoorState", "Target Door State", 1, "DoorState.HomeKit", 30, true);
+				$this->MaintainVariable("CurrentDoorState", "Current Door State", 1, "DoorState.HomeKit", 40, true);
+				$this->MaintainVariable("TargetTemperature", "Target Temperature", 2, "~Temperature", 50, false);
+				$this->MaintainVariable("CurrentTemperature", "Current Temperature", 2, "~Temperature", 60, false);
 				break;
 			case 3: // thermostat
 				$this->MaintainVariable("PowerState", "PowerState", 0, "~Switch", 10, false);
 				$this->MaintainVariable("Brightness", "Brightness", 1, "~Intensity.100", 20, false);
-				$this->MaintainVariable("TargetDoorState", "Target Door State", 1, "", 30, false);
-				$this->MaintainVariable("CurrentDoorState", "Current Door State", 1, "", 40, false);
-				$this->MaintainVariable("TargetTemperature", "Target Temperature", 2, "", 50, true);
-				$this->MaintainVariable("CurrentTemperature", "Current Temperature", 2, "", 60, true);
+				$this->MaintainVariable("TargetDoorState", "Target Door State", 1, "DoorState.HomeKit", 30, false);
+				$this->MaintainVariable("CurrentDoorState", "Current Door State", 1, "DoorState.HomeKit", 40, false);
+				$this->MaintainVariable("TargetTemperature", "Target Temperature", 2, "~Temperature", 50, true);
+				$this->MaintainVariable("CurrentTemperature", "Current Temperature", 2, "~Temperature", 60, true);
 				break;
 		}
 	}
@@ -86,6 +94,7 @@ class HomeKitAccessory extends IPSModule {
 		// get target variable id
 		$variableId = $this->ReadPropertyInteger("PowerStateVariableId");
 		$this->SetTargetVariableValue($variableId, "PowerState", $value);
+		SetValueBoolean($this->GetIDForIdent("PowerState"), $value);
 	}
 
 	public function GetPowerState() {
@@ -106,12 +115,14 @@ class HomeKitAccessory extends IPSModule {
 		// brightness variable specified?
 		if ($variableId > 0) {
 			$this->SetTargetVariableValue($variableId, "Brightness", $value);
+			SetValueInteger($this->GetIDForIdent("Brightness"), $value);
 			return;
 		}
 		
 		// fallback to power state
 		$variableId = $this->ReadPropertyInteger("PowerStateVariableId");
 		$this->SetTargetVariableValue($variableId, "PowerState", $value > 0);
+		SetValueInteger($this->GetIDForIdent("Brightness"), $value > 0 ? 100 : 0);
 	}
 
 	public function GetBrightness() {
@@ -138,6 +149,7 @@ class HomeKitAccessory extends IPSModule {
 		// get target variable id
 		$variableId = $this->ReadPropertyInteger("TargetTemperatureVariableId");
 		$this->SetTargetVariableValue($variableId, "TargetTemperature", $value);
+		SetValueFloat($this->GetIDForIdent("TargetTemperature"), $value);
 	}
 
 	public function GetTargetTemperature() {
@@ -162,6 +174,7 @@ class HomeKitAccessory extends IPSModule {
 		// get target variable id
 		$variableId = $this->ReadPropertyInteger("TargetDoorStateVariableId");
 		$this->SetTargetVariableValue($variableId, "TargetDoorState", $value);
+		SetValueInteger($this->GetIDForIdent("TargetDoorState"), $value);
 	}
 
 	public function GetTargetDoorState() {
@@ -318,6 +331,36 @@ class HomeKitAccessory extends IPSModule {
 		
 		return $value;
 	}
+
+	private function RegisterProfileInteger($name, $icon, $prefix, $suffix, $minValue, $maxValue, $stepSize) {
+		if(!IPS_VariableProfileExists($name)) {
+			IPS_CreateVariableProfile($name, 1);
+		} else {
+			$profile = IPS_GetVariableProfile($name);
+			if($profile['ProfileType'] != 1)
+				throw new Exception("Variable profile type does not match for profile " . $name);
+		}
+
+		IPS_SetVariableProfileIcon($name, $icon);
+		IPS_SetVariableProfileText($name, $prefix, $suffix);
+		IPS_SetVariableProfileValues($name, $minValue, $maxValue, $stepSize);
+	}
+
+	private function RegisterProfileIntegerEx($name, $icon, $prefix, $suffix, $associations) {
+		if ( sizeof($associations) === 0 ){
+			$minValue = 0;
+			$maxValue = 0;
+		} else {
+			$minValue = $associations[0][0];
+			$maxValue = $associations[sizeof($associations)-1][0];
+		}
+
+		$this->RegisterProfileInteger($name, $icon, $prefix, $suffix, $minValue, $maxValue, 0);
+
+		foreach($associations as $association)
+			IPS_SetVariableProfileAssociation($name, $association[0], $association[1], $association[2], $association[3]);
+	}
+
 }
 
 /*
