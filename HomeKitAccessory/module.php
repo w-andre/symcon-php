@@ -35,16 +35,16 @@ class HomeKitAccessory extends IPSModule {
 		
 		
 		$this->RegisterPropertyInteger("TargetLockMechanismStateVariableId", 0);
-		$this->RegisterPropertyString("TargetLockMechanismStateUnsecured", 0);
-		$this->RegisterPropertyString("TargetLockMechanismStateSecured", 1);
-		$this->RegisterPropertyString("TargetLockMechanismStateJammed", 2);
-		$this->RegisterPropertyString("TargetLockMechanismStateUnknown", 3);
+		$this->RegisterPropertyString("TargetLockMechanismStateUnsecured", "0");
+		$this->RegisterPropertyString("TargetLockMechanismStateSecured", "1");
+		$this->RegisterPropertyString("TargetLockMechanismStateJammed", "2");
+		$this->RegisterPropertyString("TargetLockMechanismStateUnknown", "3");
 		
 		$this->RegisterPropertyInteger("CurrentLockMechanismStateVariableId", 0);
-		$this->RegisterPropertyString("CurrentLockMechanismStateUnsecured", 0);
-		$this->RegisterPropertyString("CurrentLockMechanismStateSecured", 1);
-		$this->RegisterPropertyString("CurrentLockMechanismStateJammed", 2);
-		$this->RegisterPropertyString("CurrentLockMechanismStateUnknown", 3);
+		$this->RegisterPropertyString("CurrentLockMechanismStateUnsecured", "0");
+		$this->RegisterPropertyString("CurrentLockMechanismStateSecured", "1");
+		$this->RegisterPropertyString("CurrentLockMechanismStateJammed", "2");
+		$this->RegisterPropertyString("CurrentLockMechanismStateUnknown", "3");
 	}
 
 	public function ApplyChanges() {
