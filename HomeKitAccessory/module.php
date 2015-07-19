@@ -78,6 +78,8 @@ class HomeKitAccessory extends IPSModule {
 				$this->MaintainVariable("CurrentDoorState", "Current Door State", 1, "DoorState.HomeKit", 40, false);
 				$this->MaintainVariable("TargetTemperature", "Target Temperature", 2, "~Temperature", 50, false);
 				$this->MaintainVariable("CurrentTemperature", "Current Temperature", 2, "~Temperature", 60, false);
+				$this->MaintainVariable("TargetLockMechanismState", "Target Lock Mechanism State", 1, "LockMechanismSate.HomeKit", 70, false);
+				$this->MaintainVariable("CurrentLockMechanismState", "Current Lock Mechanism State", 1, "LockMechanismSate.HomeKit", 80, false);
 				break;
 			case 1: // light bulb
 				$this->MaintainVariable("PowerState", "Power State", 0, "~Switch", 10, true);
@@ -86,6 +88,8 @@ class HomeKitAccessory extends IPSModule {
 				$this->MaintainVariable("Current Door State", "Current Door State", 1, "DoorState.HomeKit", 40, false);
 				$this->MaintainVariable("Target Temperature", "Target Temperature", 2, "~Temperature", 50, false);
 				$this->MaintainVariable("Current Temperature", "Current Temperature", 2, "~Temperature", 60, false);
+				$this->MaintainVariable("TargetLockMechanismState", "Target Lock Mechanism State", 1, "LockMechanismSate.HomeKit", 70, false);
+				$this->MaintainVariable("CurrentLockMechanismState", "Current Lock Mechanism State", 1, "LockMechanismSate.HomeKit", 80, false);
 				break;
 			case 2: // garage door opener
 				$this->MaintainVariable("PowerState", "Power State", 0, "~Switch", 10, false);
@@ -94,6 +98,8 @@ class HomeKitAccessory extends IPSModule {
 				$this->MaintainVariable("CurrentDoorState", "Current Door State", 1, "DoorState.HomeKit", 40, true);
 				$this->MaintainVariable("TargetTemperature", "Target Temperature", 2, "~Temperature", 50, false);
 				$this->MaintainVariable("CurrentTemperature", "Current Temperature", 2, "~Temperature", 60, false);
+				$this->MaintainVariable("TargetLockMechanismState", "Target Lock Mechanism State", 1, "LockMechanismSate.HomeKit", 70, false);
+				$this->MaintainVariable("CurrentLockMechanismState", "Current Lock Mechanism State", 1, "LockMechanismSate.HomeKit", 80, false);
 				break;
 			case 3: // thermostat
 				$this->MaintainVariable("PowerState", "PowerState", 0, "~Switch", 10, false);
@@ -102,6 +108,8 @@ class HomeKitAccessory extends IPSModule {
 				$this->MaintainVariable("CurrentDoorState", "Current Door State", 1, "DoorState.HomeKit", 40, false);
 				$this->MaintainVariable("TargetTemperature", "Target Temperature", 2, "~Temperature", 50, true);
 				$this->MaintainVariable("CurrentTemperature", "Current Temperature", 2, "~Temperature", 60, true);
+				$this->MaintainVariable("TargetLockMechanismState", "Target Lock Mechanism State", 1, "LockMechanismSate.HomeKit", 70, false);
+				$this->MaintainVariable("CurrentLockMechanismState", "Current Lock Mechanism State", 1, "LockMechanismSate.HomeKit", 80, false);
 				break;
 			case 4: // lock mechanism
 				$this->MaintainVariable("PowerState", "Power State", 0, "~Switch", 10, false);
@@ -228,15 +236,15 @@ class HomeKitAccessory extends IPSModule {
 	public function SetTargetLockMechanismState($value) {
 		// get target variable id
 		$variableId = $this->ReadPropertyInteger("TargetLockMechanismStateVariableId");
-		$this->SetTargetVariableValue($variableId, "TargetLockMechanism", $value);
-		SetValueInteger($this->GetIDForIdent("TargetLockMechanism"), $value);
+		$this->SetTargetVariableValue($variableId, "TargetLockMechanismState", $value);
+		SetValueInteger($this->GetIDForIdent("TargetLockMechanismState"), $value);
 	}
 
 	public function GetTargetLockMechanismState() {
 		// get target variable id
 		$variableId = $this->ReadPropertyInteger("TargetLockMechanismStateVariableId");
-		$value = $this->GetHomeKitValue($variableId, "TargetLockMechanism");
-		SetValueInteger($this->GetIDForIdent("TargetLockMechanism"), $value);
+		$value = $this->GetHomeKitValue($variableId, "TargetLockMechanismState");
+		SetValueInteger($this->GetIDForIdent("TargetLockMechanismState"), $value);
 	}
 
 	public function GetCurrentLockMechanismState() {
