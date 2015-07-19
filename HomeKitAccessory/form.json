@@ -33,7 +33,7 @@
 		
 		{ "type": "Label", "label": "Thermostat variables" },
 		{ "type": "SelectVariable", "name": "TargetTemperatureVariableId", "caption": "Target Temperature" },
-		{ "type": "SelectVariable", "name": "CurrentTemperatureVariableId", "caption": "Current Temperature" }
+		{ "type": "SelectVariable", "name": "CurrentTemperatureVariableId", "caption": "Current Temperature" },
 		
 		{ "type": "Label", "label": "Lock Mechanism variables" },
 		{ "type": "SelectVariable", "name": "TargetLockMechanismStateVariableId", "caption": "Target Lock Mechanism State" },
