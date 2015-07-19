@@ -227,14 +227,14 @@ class HomeKitAccessory extends IPSModule {
 
 	public function SetTargetLockMechanismState($value) {
 		// get target variable id
-		$variableId = $this->ReadPropertyInteger("TargetLockMechanismVariableId");
+		$variableId = $this->ReadPropertyInteger("TargetLockMechanismStateVariableId");
 		$this->SetTargetVariableValue($variableId, "TargetLockMechanism", $value);
 		SetValueInteger($this->GetIDForIdent("TargetLockMechanism"), $value);
 	}
 
 	public function GetTargetLockMechanismState() {
 		// get target variable id
-		$variableId = $this->ReadPropertyInteger("TargetLockMechanismVariableId");
+		$variableId = $this->ReadPropertyInteger("TargetLockMechanismStateVariableId");
 		$value = $this->GetHomeKitValue($variableId, "TargetLockMechanism");
 		SetValueInteger($this->GetIDForIdent("TargetLockMechanism"), $value);
 	}
@@ -315,6 +315,38 @@ class HomeKitAccessory extends IPSModule {
 						break;
 				}
 				break;
+			case "TargetLockMechanism":
+				switch ($homeKitValue) {
+					case 0: //HMCharacteristicValueLockMechanismState::Unsecured
+						$targetValueString = $this->ReadPropertyString("TargetLockMechanismStateUnsecured");
+						break;
+					case 1: //HMCharacteristicValueLockMechanismState::Secured
+						$targetValueString = $this->ReadPropertyString("TargetLockMechanismStateSecured");
+						break;
+					case 2: //HMCharacteristicValueLockMechanismState::Jammed
+						$targetValueString = $this->ReadPropertyString("TargetLockMechanismStateJammed");
+						break;
+					case 3: //HMCharacteristicValueLockMechanismState::Unknown
+						$targetValueString = $this->ReadPropertyString("TargetLockMechanismStateUnknown");
+						break;
+				}
+				break;
+			case "CurrentLockMechanism":
+				switch ($homeKitValue) {
+					case 0: //HMCharacteristicValueLockMechanismState::Unsecured
+						$targetValueString = $this->ReadPropertyString("CurrentLockMechanismStateUnsecured");
+						break;
+					case 1: //HMCharacteristicValueLockMechanismState::Secured
+						$targetValueString = $this->ReadPropertyString("CurrentLockMechanismStateSecured");
+						break;
+					case 2: //HMCharacteristicValueLockMechanismState::Jammed
+						$targetValueString = $this->ReadPropertyString("CurrentLockMechanismStateJammed");
+						break;
+					case 3: //HMCharacteristicValueLockMechanismState::Unknown
+						$targetValueString = $this->ReadPropertyString("CurrentLockMechanismStateUnknown");
+						break;
+				}
+				break;
 			case "CurrentTemperature": 
 			case "TargetTemperature": 
 			default:
@@ -365,7 +397,7 @@ class HomeKitAccessory extends IPSModule {
 						return 4; //HMCharacteristicValueDoorState::Stopped;
 				}
 				break;
-			case "DoorState":
+			case "CurrentDoorState":
 				switch ($valueString) {
 					case $this->ReadPropertyString("CurrentDoorStateOpen"):
 						return 0; //HMCharacteristicValueDoorState::Open;
@@ -377,6 +409,30 @@ class HomeKitAccessory extends IPSModule {
 						return 3; //HMCharacteristicValueDoorState::Closing;
 					case $this->ReadPropertyString("CurrentDoorStateStopped"):
 						return 4; //HMCharacteristicValueDoorState::Stopped;
+				}
+				break;
+			case "TargetLockMechanismState":
+				switch ($valueString) {
+					case $this->ReadPropertyString("TargetLockMechanismStateUnsecured"):
+						return 0; //HMCharacteristicValueLockMechanismState::Unsecured
+					case $this->ReadPropertyString("TargetLockMechanismStateSecured"):
+						return 1; //HMCharacteristicValueLockMechanismState::Secured
+					case $this->ReadPropertyString("TargetLockMechanismStateJammed"):
+						return 2; //HMCharacteristicValueLockMechanismState::Jammed
+					case $this->ReadPropertyString("TargetLockMechanismStateUnknown"):
+						return 3; //HMCharacteristicValueLockMechanismState::Unknown
+				}
+				break;
+			case "CurrentLockMechanismState":
+				switch ($valueString) {
+					case $this->ReadPropertyString("CurrentLockMechanismStateUnsecured"):
+						return 0; //HMCharacteristicValueLockMechanismState::Unsecured
+					case $this->ReadPropertyString("CurrentLockMechanismStateSecured"):
+						return 1; //HMCharacteristicValueLockMechanismState::Secured
+					case $this->ReadPropertyString("CurrentLockMechanismStateJammed"):
+						return 2; //HMCharacteristicValueLockMechanismState::Jammed
+					case $this->ReadPropertyString("CurrentLockMechanismStateUnknown"):
+						return 3; //HMCharacteristicValueLockMechanismState::Unknown
 				}
 				break;
 			case "CurrentTemperature": // value has to be float
@@ -417,25 +473,5 @@ class HomeKitAccessory extends IPSModule {
 	}
 
 }
-
-/*
-class HMCharacteristicValueDoorState extends SplEnum {
-	const __default = self::Open;
-
-	const Open = 0;
-	const Closed = 1;
-	const Opening = 2;
-	const Closing = 3;
-	const Stopped = 4;
-}
-
-class HMCharacteristicValueHeatingCooling extends SplEnum {
-	const __default = self::Off;
-
-	const Off = 0;
-	const Heat = 1;
-	const Cool = 2;
-	const Auto = 3;
-}*/
 
 ?>
