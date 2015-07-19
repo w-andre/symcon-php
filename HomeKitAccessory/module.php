@@ -193,6 +193,9 @@ class HomeKitAccessory extends IPSModule {
 
 	private function GetTargetValue($variableId, $homeKitVariableType, $homeKitValue) {
 		$variable = IPS_GetVariable($variableId);
+		$variableProfile = $variable['VariableProfile']
+			? IPS_GetVariableProfile($variable['VariableProfile'])
+			: NULL;
 		
 		$targetValueString = "";
 		switch ($homeKitVariableType) {
@@ -244,8 +247,8 @@ class HomeKitAccessory extends IPSModule {
 						break;
 				}
 				break;
-			case "CurrentTemperature": // value has to be float
-			case "TargetTemperature": // value has to be float
+			case "CurrentTemperature": 
+			case "TargetTemperature": 
 			default:
 				$targetValueString = strval($homeKitValue);
 		}
@@ -258,7 +261,9 @@ class HomeKitAccessory extends IPSModule {
 			case 1: // integer
 				return intval($targetValueString);
 			case 2: // float
-				return floatval($targetValueString);
+				return $variableProfile && $variableProfile["Digits"] == 0
+					? intval($targetValueString)
+					: floatval($targetValueString);
 			case 3: // string
 				return $targetValueString;
 			default:
