@@ -147,6 +147,7 @@ class WHDDAM6000 extends IPSModule {
 		}
 		
 		// update parent instance configuration
+		if (strlen($host) === 0) return;
 		IPS_SetConfiguration($parentInstance['InstanceID'], json_encode(Array(
 			"Open" => true,
 			"Host" => $host,
