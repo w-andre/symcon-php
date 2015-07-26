@@ -1,0 +1,11 @@
+{
+	"id" : "{92B68DFF-49BA-470B-8200-5FF809E88ED0}",
+	"name" : "WHD DAM 6000",
+	"type" : 3,
+	"vendor" : "WHD",
+	"aliases" : ["WHD DAM 6000"],
+	"parentRequirements" : ["{3CFF0FD9-E306-41DB-9B5A-9D06D38576C3}"],
+	"childRequirements" : ["{1D8ACAA5-1587-4BF5-A624-CD3351D89A0D}"],
+	"implemented" : [],
+	"prefix" : "WHDDAM"
+}
