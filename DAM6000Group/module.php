@@ -1,12 +1,10 @@
 <?
 class WHDDAM6000Group extends IPSModule {
 
-	public function __construct($InstanceID) {
+	public function Create() {
 		//Never delete this line!
-		parent::__construct($InstanceID);
+		parent::Create();
 
-		//These lines are parsed on Symcon Startup or Instance creation
-		//You cannot use variables here. Just static values.
 		$this->RegisterPropertyInteger('Group', 0);
 	}
 
