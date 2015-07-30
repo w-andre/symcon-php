@@ -1,13 +1,15 @@
 <?
 class WHDDAM6000 extends IPSModule {
 
-	public function __construct($InstanceID) {
+	public function Create() {
 		//Never delete this line!
-		parent::__construct($InstanceID);
+		parent::Create();
 		
 		//These lines are parsed on Symcon Startup or Instance creation
 		//You cannot use variables here. Just static values.
 		$this->RegisterPropertyString("Host", "");
+		$this->RegisterPropertyString("MessageBuffer", "");
+		$this->RegisterPropertyInteger("MessageLength", -1);
 	}
 
 	public function ApplyChanges() {
@@ -21,11 +23,78 @@ class WHDDAM6000 extends IPSModule {
 		$this->ConnectAndConfigureParent($host);
 		
 		// get source list to update variable profile
-		$this->GetSourceList();
+		//$this->GetSourceList();
+		
+		// reset properties
+		$this->WriteProperty("MessageBuffer", "");
+		$this->WriteProperty("MessageLength", -1);
 	}
+	
+	private function WriteProperty($name, $value) {
+			
+			if(!isset($this->Configuration)) {
+				$this->Configuration = json_decode(IPS_GetConfiguration($this->InstanceID));
+			}
+			
+			if(!isset($this->Configuration->$name))
+				throw new Exception("Invalid Property $name");
+			
+			$this->Configuration->$name = $value;
+			
+			IPS_SetConfiguration($this->InstanceID, json_encode($this->Configuration));
+		}
 
 	public function ReceiveData($jsonString) {
-		IPS_LogMessage('WHD DAM 6000', json_encode($jsonString));
+		IPS_LogMessage('WHD DAM 6000', $jsonString);
+		
+		$messageBuffer = $this->ReadPropertyString("MessageBuffer");
+		$messageLength = $this->ReadPropertyInteger("MessageLength");
+		
+		$response = json_decode($jsonString);
+		$hexMessage = bin2hex($response->Buffer);
+		
+		if ($messageLength === -1) {
+			$messageLength = hexdec(substr($hexMessage, 4, 2));
+			IPS_LogMessage('WHD DAM 6000', $messageLength);
+		}
+		
+		$messageBuffer .= $hexMessage;
+		
+		if (strlen($messageBuffer) !== 6 + $messageLength * 2) {
+			IPS_LogMessage('WHD DAM 6000', $messageBuffer);
+		} else {
+			$message = $this->DecodeDamMessage($messageBuffer);
+			IPS_LogMessage('WHD DAM 6000', json_encode($message));
+			$messageBuffer = "";
+			$messageLength = -1;
+			$this->ProcessResponse($message);
+		}
+		
+		$this->WriteProperty("MessageBuffer", $messageBuffer);
+		$this->WriteProperty("MessageLength", $messageLength);
+	}
+
+	public function ProcessResponse($message) {
+		$messageName = array_keys($message[0])[0];
+		
+		switch($messageName) {
+			case "Ack-Source-list":
+				$sourceList = [];
+				foreach($message[0]["Ack-Source-list"][1]["Source-list"] as $key => $value) {
+					$sourceType = array_keys($value)[0];
+					array_push($sourceList, Array(
+						$value[$sourceType][0]["Id"],
+						$value[$sourceType][1]["Name"],
+						"",
+						-1
+					));
+				}
+				$this->RegisterProfileIntegerEx("Source.WHDDAM6000", "Information", "", "", $sourceList);
+				break;
+			case "Ack-Group":
+				IPS_LogMessage('WHD DAM 6000 Ack-Group', json_encode($message[0]["MessageValue"][1]["MessageValue"]));
+				break;
+		}
 	}
 
 	public function GetSourceList() {
@@ -112,7 +181,10 @@ class WHDDAM6000 extends IPSModule {
 
 	private function SendRequest($request) {
 		$data = $this->EncodeDamMessage($request);
-		$this->SendDataToParent(hex2bin($data));
+		$this->SendDataToParent(json_encode(Array(
+			"DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}",
+			"Buffer" => hex2bin($data)
+		)));
 	}
 
 	private function ConnectAndConfigureParent($host) {
@@ -156,31 +228,6 @@ class WHDDAM6000 extends IPSModule {
 		)));
 		IPS_ApplyChanges($parentInstance['InstanceID']);
 	}
-
-	protected function RegisterProfile($name, $icon, $prefix, $suffix, $minValue, $maxValue, $stepSize, $profileType) {
-		if (!IPS_VariableProfileExists($name)) {
-			IPS_CreateVariableProfile($name, $profileType);
-			IPS_SetVariableProfileIcon($name, $icon);
-			IPS_SetVariableProfileText($name, $prefix, $suffix);
-			IPS_SetVariableProfileValues($name, $minValue, $maxValue, $stepSize);
-			return true;
-		} else {
-			$profile = IPS_GetVariableProfile($name);
-			if ($profile['ProfileType'] != $profileType)
-				throw new Exception("Variable profile type does not match for profile " . $name);
-			return false;
-		}
-	}
-
-	protected function RegisterProfileEx($name, $icon, $prefix, $suffix, $profileType, $associations) {
-		$result = $this->RegisterProfile($name, $icon, $prefix, $suffix, $associations[0][0], $associations[sizeof($associations) - 1][0], 0, $profileType);
-		if (!$result) return; // do not set associations if the profile does already exist (allow renaming)
-
-		foreach($associations as $association) {
-			IPS_SetVariableProfileAssociation($name, $association[0], $association[1], $association[2], $association[3]);
-		}
-	}
-
 
 	private function DecodeDamMessageName($messageId) {
 		switch($messageId) {
@@ -354,11 +401,40 @@ class WHDDAM6000 extends IPSModule {
 				echo "ERROR";
 			}
 			
-			array_push($message, Array($messageName => $value));
+			array_push($message, Array($messageName =>$value));
 			
 			$hexMessage = substr($hexMessage, 6 + (2 * $length));
 		}
 		return $message;
+	}
+
+	private function RegisterProfileInteger($name, $icon, $prefix, $suffix, $minValue, $maxValue, $stepSize) {
+		if(!IPS_VariableProfileExists($name)) {
+			IPS_CreateVariableProfile($name, 1);
+		} else {
+			$profile = IPS_GetVariableProfile($name);
+			if($profile['ProfileType'] != 1)
+				throw new Exception("Variable profile type does not match for profile " . $name);
+		}
+
+		IPS_SetVariableProfileIcon($name, $icon);
+		IPS_SetVariableProfileText($name, $prefix, $suffix);
+		IPS_SetVariableProfileValues($name, $minValue, $maxValue, $stepSize);
+	}
+
+	private function RegisterProfileIntegerEx($name, $icon, $prefix, $suffix, $associations) {
+		if ( sizeof($associations) === 0 ){
+			$minValue = 0;
+			$maxValue = 0;
+		} else {
+			$minValue = $associations[0][0];
+			$maxValue = $associations[sizeof($associations)-1][0];
+		}
+
+		$this->RegisterProfileInteger($name, $icon, $prefix, $suffix, $minValue, $maxValue, 0);
+
+		foreach($associations as $association)
+			IPS_SetVariableProfileAssociation($name, $association[0], $association[1], $association[2], $association[3]);
 	}
 
 }
