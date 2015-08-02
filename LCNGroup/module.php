@@ -1,12 +1,10 @@
 <?
 class LCNGroup extends IPSModule {
 
-	public function __construct($InstanceID) {
+	public function Create() {
 		//Never delete this line!
-		parent::__construct($InstanceID);
-
-		//These lines are parsed on Symcon Startup or Instance creation
-		//You cannot use variables here. Just static values.
+		parent::Create();
+		
 		$this->RegisterPropertyInteger("Segment", 0);
 		$this->RegisterPropertyInteger("Group", 0);
 		$this->RegisterPropertyInteger("Unit", 0);

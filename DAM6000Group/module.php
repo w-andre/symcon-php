@@ -1,12 +1,10 @@
 <?
 class WHDDAM6000Group extends IPSModule {
 
-	public function __construct($InstanceID) {
+	public function Create() {
 		//Never delete this line!
-		parent::__construct($InstanceID);
-
-		//These lines are parsed on Symcon Startup or Instance creation
-		//You cannot use variables here. Just static values.
+		parent::Create();
+		
 		$this->RegisterPropertyInteger('Group', 0);
 	}
 
@@ -30,51 +28,51 @@ class WHDDAM6000Group extends IPSModule {
 		$group = $this->ReadPropertyInteger('Group');
 		
 		$this->SendDataToParent(json_encode(Array(
-			"DataId" => "{31D661FC-4C47-42B2-AD7E-0D87064D780A}",
+			"DataID" => "{31D661FC-4C47-42B2-AD7E-0D87064D780A}",
 			"Group" => $group,
 			"ValueType" => "Volume",
 			"Value" => $volume
 		)));
-		
-		SetValueInteger($this->GetIDForIdent("Volume"), $volume);
 	}
 
-	public function SetStatus($mute) {
+	public function SetStatus($status) {
 		$group = $this->ReadPropertyInteger('Group');
 		
 		$this->SendDataToParent(json_encode(Array(
-			"DataId" => "{31D661FC-4C47-42B2-AD7E-0D87064D780A}",
+			"DataID" => "{31D661FC-4C47-42B2-AD7E-0D87064D780A}",
 			"Group" => $group,
-			"ValueType" => "Status",
-			"Value" => $mute
+			"ValueType" => "Mute",
+			"Value" => $status == 0
 		)));
-		
-		SetValueBoolean($this->GetIDForIdent("Status"), $mute);
 	}
 
 	public function SetSource($sourceId) {
 		$group = $this->ReadPropertyInteger('Group');
 		
 		$this->SendDataToParent(json_encode(Array(
-			"DataId" => "{31D661FC-4C47-42B2-AD7E-0D87064D780A}",
+			"DataID" => "{31D661FC-4C47-42B2-AD7E-0D87064D780A}",
 			"Group" => $group,
 			"ValueType" => "Source",
 			"Value" => $sourceId
 		)));
-		
-		SetValueInteger($this->GetIDForIdent("Source"), $sourceId);
 	}
 
 	// receive data from parent --> update status
 	public function ReceiveData($jsonString) {
 		$group = $this->ReadPropertyInteger('Group');
+		$response = json_decode($jsonString);
 		
-		$data = json_decode($jsonString);
-		$groupData = $data[$group];
-		
-		SetValueInteger($this->GetIDForIdent("Volume"), $groupData["Volume"]);
-		SetValueBoolean($this->GetIDForIdent("Status"), $groupData["Status"]);
-		SetValueInteger($this->GetIDForIdent("Source"), $groupData["Source"]);
+		switch($response->DataID) {
+			case "{60D2151B-5D26-4B4F-8C98-A6CD451846D0}": // WHD DAM 6000
+				if ($group !== $response->Group) return; // message is not for me (different group)
+				SetValueInteger($this->GetIDForIdent("Volume"), $response->Volume);
+				SetValueBoolean($this->GetIDForIdent("Status"), $response->Mute == 0);
+				SetValueInteger($this->GetIDForIdent("Source"), $response->Source);				
+				IPS_SetName($this->InstanceID, $response->Name);
+				break;
+			default:
+				IPS_LogMessage('WHD DAM 6000 Group', "Error: Invalid DataID!");
+		}
 	}
 
 	public function RequestAction($ident, $value) {

@@ -2,5 +2,9 @@
 	"elements": [
 		{ "name": "Host", "type": "ValidationTextBox", "caption": "Host" }
 	],
-	"actions": []
+	"actions": [
+		{ "type": "Button", "label": "Get Group List", "onClick": "WHDDAM_GetGroupList($id);" },
+		{ "type": "Button", "label": "Get Source List", "onClick": "WHDDAM_GetSourceList($id);" },
+		{ "type": "Button", "label": "Reset Message Buffer", "onClick": "WHDDAM_ResetMessageBuffer($id);" }
+	]
 }
