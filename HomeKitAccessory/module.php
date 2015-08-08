@@ -4,7 +4,7 @@ class HomeKitAccessory extends IPSModule {
 	public function Create() {
 		//Never delete this line!
 		parent::Create();
-
+		
 		$this->RegisterPropertyInteger("DeviceType", 0);
 		
 		$this->RegisterPropertyInteger("PowerStateVariableId", 0);

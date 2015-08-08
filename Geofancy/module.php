@@ -3,8 +3,7 @@
 	class Geofancy extends IPSModule
 	{
 		
-		public function Create()
-		{
+		public function Create() {
 			//Never delete this line!
 			parent::Create();
 		}

@@ -5,8 +5,6 @@ class WHDDAM6000 extends IPSModule {
 		//Never delete this line!
 		parent::Create();
 		
-		//These lines are parsed on Symcon Startup or Instance creation
-		//You cannot use variables here. Just static values.
 		$this->RegisterPropertyString("Host", "");
 		$this->RegisterPropertyString("MessageBuffer", "");
 		$this->RegisterPropertyInteger("MessageLength", -1);
@@ -23,164 +21,217 @@ class WHDDAM6000 extends IPSModule {
 		$this->ConnectAndConfigureParent($host);
 		
 		// get source list to update variable profile
-		//$this->GetSourceList();
+		$this->GetSourceList();
 		
 		// reset properties
+		$this->ResetMessageBuffer();
+	}
+
+	public function ResetMessageBuffer() {
 		$this->WriteProperty("MessageBuffer", "");
 		$this->WriteProperty("MessageLength", -1);
 	}
-	
-	private function WriteProperty($name, $value) {
-			
-			if(!isset($this->Configuration)) {
-				$this->Configuration = json_decode(IPS_GetConfiguration($this->InstanceID));
-			}
-			
-			if(!isset($this->Configuration->$name))
-				throw new Exception("Invalid Property $name");
-			
-			$this->Configuration->$name = $value;
-			
-			IPS_SetConfiguration($this->InstanceID, json_encode($this->Configuration));
-		}
 
-	public function ReceiveData($jsonString) {
-		IPS_LogMessage('WHD DAM 6000', $jsonString);
+	private function WriteProperty($name, $value) {	
+		if(!isset($this->Configuration))
+			$this->Configuration = json_decode(IPS_GetConfiguration($this->InstanceID));
 		
-		$messageBuffer = $this->ReadPropertyString("MessageBuffer");
-		$messageLength = $this->ReadPropertyInteger("MessageLength");
+		if(!isset($this->Configuration->$name))
+			throw new Exception("Invalid Property $name");
 		
+		$this->Configuration->$name = $value;
+		IPS_SetConfiguration($this->InstanceID, json_encode($this->Configuration));
+	}
+	
+	public function ForwardData($jsonString) {
 		$response = json_decode($jsonString);
-		$hexMessage = bin2hex($response->Buffer);
 		
-		if ($messageLength === -1) {
-			$messageLength = hexdec(substr($hexMessage, 4, 2));
-			IPS_LogMessage('WHD DAM 6000', $messageLength);
+		switch($response->DataID) {
+			case "{31D661FC-4C47-42B2-AD7E-0D87064D780A}": // message from WHDDAM6000Group
+				switch($response->ValueType) {
+					case "Volume":
+						$this->SetGroupVolume($response->Group, $response->Value);
+						break;
+					case "Source":
+						$this->SetGroupSource($response->Group, $response->Value);
+						break;
+					case "Mute":
+						$this->SetGroupMute($response->Group, $response->Value);
+						break;
+				}		
+				break;
+			default:
+				IPS_LogMessage('WHD DAM 6000', "Error: Invalid DataID!");
+				break;
 		}
-		
-		$messageBuffer .= $hexMessage;
-		
-		if (strlen($messageBuffer) !== 6 + $messageLength * 2) {
-			IPS_LogMessage('WHD DAM 6000', $messageBuffer);
-		} else {
-			$message = $this->DecodeDamMessage($messageBuffer);
-			IPS_LogMessage('WHD DAM 6000', json_encode($message));
-			$messageBuffer = "";
-			$messageLength = -1;
-			$this->ProcessResponse($message);
-		}
-		
-		$this->WriteProperty("MessageBuffer", $messageBuffer);
-		$this->WriteProperty("MessageLength", $messageLength);
 	}
 
-	public function ProcessResponse($message) {
-		$messageName = array_keys($message[0])[0];
+	public function ReceiveData($jsonString) {
+		$jsonString = preg_replace('/[\\\]"}$/i', '\\\\\\"}', $jsonString);
+		$response = json_decode($jsonString);
 		
-		switch($messageName) {
-			case "Ack-Source-list":
-				$sourceList = [];
-				foreach($message[0]["Ack-Source-list"][1]["Source-list"] as $key => $value) {
-					$sourceType = array_keys($value)[0];
-					array_push($sourceList, Array(
-						$value[$sourceType][0]["Id"],
-						$value[$sourceType][1]["Name"],
-						"",
-						-1
-					));
+		switch($response->DataID) {
+			case "{018EF6B5-AB94-40C6-AA53-46943E824ACF}": // Client Socket --> WHD response
+				$messageBuffer = $this->ReadPropertyString("MessageBuffer");
+				$messageLength = $this->ReadPropertyInteger("MessageLength");
+						
+				$hexMessage = bin2hex(utf8_decode($response->Buffer));
+				$messageBuffer .= $hexMessage;
+				
+				if ($messageLength === -1)
+					$messageLength = hexdec(substr($hexMessage, 4, 2));
+				
+				if (strlen($messageBuffer) !== 6 + $messageLength * 2) {
+					$this->WriteProperty("MessageBuffer", $messageBuffer);
+					$this->WriteProperty("MessageLength", $messageLength);
+				} else {
+					$this->ResetMessageBuffer();
+					$message = $this->DecodeDamMessage($messageBuffer);
+					
+					$this->ProcessResponse($message);
 				}
+				break;
+			default:
+				IPS_LogMessage('WHD DAM 6000', "Error: Invalid DataID!");
+				break;
+		}
+	}
+
+	private function ProcessResponse($xml) {
+		switch($xml->getName()) {
+			case "AckSourceList":
+				$sourceList = [];
+				foreach($xml->SourceList->children() as $child)
+					array_push($sourceList, Array(intval($child->Id), strval($child->Name), "", -1));
 				$this->RegisterProfileIntegerEx("Source.WHDDAM6000", "Information", "", "", $sourceList);
 				break;
-			case "Ack-Group":
-				IPS_LogMessage('WHD DAM 6000 Ack-Group', json_encode($message[0]["MessageValue"][1]["MessageValue"]));
+			case "AckGroup":
+				$name = strval($xml->Group->Name);
+				if (strpos($name, ":") > 0) $name = substr($name, strpos($name, ":") + 1);
+			
+				$groupInfo = Array(
+					"DataID" => "{60D2151B-5D26-4B4F-8C98-A6CD451846D0}",
+					"Group" => intval($xml->Group->Id),
+					"Name" => $name,
+					"Volume" => intval($xml->Group->Vol),
+					"Source" => $xml->Group->DSource
+						? intval($xml->Group->DSource->Id)
+						: intval($xml->Group->ASource->Id),
+					"Mute" => intval($xml->Group->Mute),
+					"Standby" => intval($xml->Group->Standby),
+					"DNDActive" => intval($xml->Group->DNDActive)
+				);
+				$this->SendDataToChildren(json_encode($groupInfo));
+				break;
+			default:
+				IPS_LogMessage('WHD DAM 6000', ($message->asXML()));
 				break;
 		}
 	}
 
 	public function GetSourceList() {
-		$request = Array(
-			"Get-Source-list" => Array(
-				Array("Msg-tag" => 123)
-			)
-		);
-		$this->SendRequest($request);
+		$requestXml = new SimpleXMLElement(
+			"<GetSourceList>" .
+			"<MsgTag>123</MsgTag>" .
+			"</GetSourceList>");
+		
+		$this->SendRequest($requestXml);
 	}
 
 	public function GetGroupList() {
-		$request = Array(
-			"Get-Group-list" => Array(
-				Array("Msg-tag" => 123)
-			)
-		);
-		$this->SendRequest($request);
-	}
-
-	public function GetGroup($group) {
-		$request = Array(
-			"Get-Group" => Array(
-				Array(
-					"Group" => Array(
-						"Id" => $group
-					)
-				),
-				Array("Msg-tag" => 123)
-			)
-		);
-		$this->SendRequest($request);
-	}
-
-	public function SetGroupSource($group, $source) {
+		$requestXml = new SimpleXMLElement(
+			"<GetGroupList>" .
+			"<MsgTag>123</MsgTag>" .
+			"</GetGroupList>");
 		
+		$this->SendRequest($requestXml);
+	}
+
+	public function GetGroup(integer $group) {
+		$requestXml = new SimpleXMLElement(
+			"<GetGroup>" .
+			"<Group>" .
+			"<Id>" . $group . "</Id>" .
+			"</Group>" .
+			"<MsgTag>123</MsgTag>" .
+			"</GetGroup>");
+		$this->SendRequest($requestXml);
+	}
+	
+	public function SetGroup(integer $group, integer $source = NULL, integer $volume = NULL, boolean $mute = NULL) {
+		
+		$requestXmlString = "<SetGroup><Group><Id>" . $group . "</Id>";
+		
+		if ($source !== NULL) {
+			$sourceType = $source === 6
+				? "DSource"
+				: "ASource";			
+			
+			$requestXmlString .= 
+				"<" . $sourceType . ">" .
+				"<Id>" . $source . "</Id>" .
+				"</" . $sourceType . ">";			
+		}
+		
+		if ($volume !== NULL)
+			$requestXmlString .= "<Vol>" . $volume . "</Vol>";
+		
+		if ($mute !== NULL)
+			$requestXmlString .= "<Mute>" . $mute . "</Mute>";
+		
+		$requestXmlString .= "</Group><MsgTag>123</MsgTag></SetGroup>";
+				
+		$requestXml = new SimpleXMLElement($requestXmlString);
+		$this->SendRequest($requestXml);
+	}
+
+	public function SetGroupSource(integer $group, integer $source) {
 		$sourceType = $source === 6
 			? "DSource"
 			: "ASource";
 		
-		$request = Array(
-			"Set-Group" => Array(
-				Array(
-					"Group" => Array(
-						Array("Id" => $group),
-						Array($sourceType => $source)
-					)
-				),
-				Array("Msg-tag" => 123)
-			)
-		);
-		$this->SendRequest($request);
+		$requestXml = new SimpleXMLElement(
+			"<SetGroup>" .
+			"<Group>" .
+			"<Id>" . $group . "</Id>" .
+			"<" . $sourceType . ">" .
+			"<Id>" . $source . "</Id>" .
+			"</" . $sourceType . ">" .
+			"</Group>" .
+			"<MsgTag>123</MsgTag>" .
+			"</SetGroup>");
+		
+		$this->SendRequest($requestXml);
 	}
 
-	public function SetGroupVolume($group, $volume) {
-		$request = Array(
-			"Set-Group" => Array(
-				Array(
-					"Group" => Array(
-						Array("Id" => $group),
-						Array("Vol" => $volume)
-					)
-				),
-				Array("Msg-tag" => 123)
-			)
-		);
-		$this->SendRequest($request);
+	public function SetGroupVolume(integer $group, integer $volume) {
+		$requestXml = new SimpleXMLElement(
+			"<SetGroup>" .
+			"<Group>" .
+			"<Id>" . $group . "</Id>" .
+			"<Vol>" . $volume . "</Vol>" .
+			"</Group>" .
+			"<MsgTag>123</MsgTag>" .
+			"</SetGroup>");
+		
+		$this->SendRequest($requestXml);
 	}
 
-	public function SetGroupMute($group, $mute) {
-		$request = Array(
-			"Set-Group" => Array(
-				Array(
-					"Group" => Array(
-						Array("Id" => $group),
-						Array("Mute" => $volume)
-					)
-				),
-				Array("Msg-tag" => 123)
-			)
-		);
-		$this->SendRequest($request);
+	public function SetGroupMute(integer $group, boolean $mute) {
+		$requestXml = new SimpleXMLElement(
+			"<SetGroup>" .
+			"<Group>" .
+			"<Id>" . $group . "</Id>" .
+			"<Mute>" . $mute . "</Mute>" .
+			"</Group>" .
+			"<MsgTag>123</MsgTag>" .
+			"</SetGroup>");
+		
+		$this->SendRequest($requestXml);
 	}
 
-	private function SendRequest($request) {
-		$data = $this->EncodeDamMessage($request);
+	private function SendRequest($requestXml) {
+		$data = $this->EncodeDamMessage($requestXml);
 		$this->SendDataToParent(json_encode(Array(
 			"DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}",
 			"Buffer" => hex2bin($data)
@@ -235,25 +286,25 @@ class WHDDAM6000 extends IPSModule {
 			case 34: return "Name";
 			case 35: return "Vol";
 			case 45: return "Status";
-			case 49: return "DAM-Datetime";
-			case 59: return "DND-active";
+			case 49: return "DAMDatetime";
+			case 59: return "DNDActive";
 			case 60: return "Mute";
 			case 61: return "LSM";
-			case 62: return "LSM-list";
-			case 63: return "Group-list";
+			case 62: return "LSMList";
+			case 63: return "GroupList";
 			case 64: return "Group";
 			case 84: return "DSource";
 			case 85: return "ASource";
-			case 87: return "Source-list";
+			case 87: return "SourceList";
 			case 91: return "Standby";
-			case 99: return "Msg-tag";
-			case 100: return "Set-Group";
-			case 101: return "Ack-Group";
-			case 104: return "Get-Group";
-			case 106: return "Get-Group-list";
-			case 107: return "Ack-Group-list";
-			case 119: return "Get-Source-list";
-			case 120: return "Ack-Source-list";
+			case 99: return "MsgTag";
+			case 100: return "SetGroup";
+			case 101: return "AckGroup";
+			case 104: return "GetGroup";
+			case 106: return "GetGroupList";
+			case 107: return "AckGroupList";
+			case 119: return "GetSourceList";
+			case 120: return "AckSourceList";
 			default: return $messageId;
 		}
 	}
@@ -264,25 +315,25 @@ class WHDDAM6000 extends IPSModule {
 			case "Name": return 34;
 			case "Vol": return 35;
 			case "Status": return 45;
-			case "DAM-Datetime": return 49;
-			case "DND-active": return 59;
+			case "DAMDatetime": return 49;
+			case "DNDActive": return 59;
 			case "Mute": return 60;
 			case "LSM": return 61;
-			case "LSM-list": return 62;
-			case "Group-list": return 63;
+			case "LSMList": return 62;
+			case "GroupList": return 63;
 			case "Group": return 64;
 			case "DSource": return 84;
 			case "ASource": return 85;
-			case "Source-list": return 87;
+			case "SourceList": return 87;
 			case "Standby": return 91;
-			case "Msg-tag": return 99;
-			case "Set-Group": return 100;
-			case "Ack-Group": return 101;
-			case "Get-Group": return 104;
-			case "Get-Group-list": return 106;
-			case "Ack-Group-list": return 107;
-			case "Get-Source-list": return 119;
-			case "Ack-Source-list": return 120;
+			case "MsgTag": return 99;
+			case "SetGroup": return 100;
+			case "AckGroup": return 101;
+			case "GetGroup": return 104;
+			case "GetGroupList": return 106;
+			case "AckGroupList": return 107;
+			case "GetSourceList": return 119;
+			case "AckSourceList": return 120;
 			default: return $messageName;
 		}
 	}
@@ -290,29 +341,29 @@ class WHDDAM6000 extends IPSModule {
 	private function GetDamMessageType($messageName) {
 		switch($messageName) {
 			case "LSM":
-			case "LSM-list":
-			case "Group-list":
+			case "LSMList":
+			case "GroupList":
 			case "Group":
 			case "DSource":
 			case "ASource":
-			case "Source-list":
-			case "Set-Group":
-			case "Ack-Group":
-			case "Get-Group":
-			case "Get-Group-list":
-			case "Ack-Group-list":
-			case "Get-Source-list":
-			case "Ack-Source-list":
+			case "SourceList":
+			case "SetGroup":
+			case "AckGroup":
+			case "GetGroup":
+			case "GetGroupList":
+			case "AckGroupList":
+			case "GetSourceList":
+			case "AckSourceList":
 				return 127; // constructed type
 			case "Id":
 			case "Name":
 			case "Vol":
 			case "Status":
-			case "DAM-Datetime":
-			case "DND-active":
+			case "DAMDatetime":
+			case "DNDActive":
 			case "Mute":
 			case "Standby":
-			case "Msg-tag":
+			case "MsgTag":
 			default:
 				return 95; // primitive type
 		}
@@ -328,7 +379,9 @@ class WHDDAM6000 extends IPSModule {
 			case 59: // DND-active
 			case 60: // Mute
 			case 91: // Standby
-				return hexdec($value) == 255; // boolean
+				return hexdec($value) == 255
+				? 1
+				: 0; // boolean
 			case 34: // Name
 				return hex2bin($value); // string
 			default:
@@ -342,11 +395,11 @@ class WHDDAM6000 extends IPSModule {
 			case 35: // Vol
 			case 45: // Status
 			case 99: // Msg-tag
-				return $this->GetHexValue($value); // int
+				return $this->GetHexValue(intval($value)); // int
 			case 59: // DND-active
 			case 60: // Mute
 			case 91: // Standby
-				$return = $value
+				$return = boolval($value)
 					? $this->GetHexValue(255)
 					: $this->GetHexValue(0); // boolean
 			case 34: // Name
@@ -360,31 +413,34 @@ class WHDDAM6000 extends IPSModule {
 		return substr("00" . dechex($value), -2);
 	}
 
-	private function EncodeDamMessage($message, $parentMessageId = -1) {
+	private function EncodeDamMessage($xml) {
 		$hexMessage = "";
-		if (!is_array($message))
-			return $this->EncodeDamMessageValue($message, $parentMessageId);
-
-		foreach ($message as $key => $value) {
-			if (is_string($key)) {
-				$messageType = $this->GetDamMessageType($key);
-				$messageId = $this->EncodeDamMessageName($key);
-				$value = $this->EncodeDamMessage($value, $messageId);
-				$length = strlen(hex2bin($value));
-				$hexMessage .= $this->GetHexValue($messageType) 
-					. $this->GetHexValue($messageId) 
-					. $this->GetHexValue($length) 
-					. $value;
-			} else {
-				$value = $this->EncodeDamMessage($value, $parentMessageId);
-				$hexMessage .= $value;
-			}
+		
+		$messageName = $xml->getName();
+		$messageType = $this->GetDamMessageType($messageName);
+		$messageId = $this->EncodeDamMessageName($messageName);
+		
+		if ($xml->count() > 0) {
+			$value = "";
+			foreach ($xml->children() as $child)
+				$value .= $this->EncodeDamMessage($child);
+		} else {
+			$value = $this->EncodeDamMessageValue((string)$xml, $messageId);
 		}
+		
+		$length = strlen(hex2bin($value));
+		$hexMessage .= $this->GetHexValue($messageType) 
+			. $this->GetHexValue($messageId) 
+			. $this->GetHexValue($length) 
+			. $value;
+		
 		return $hexMessage;
 	}
 
-	private function DecodeDamMessage($hexMessage) {
-		$message = [];
+	private function DecodeDamMessage($hexMessage, $parentMessageName = "") {
+		$xml = $parentMessageName === ""
+			? NULL
+			: new SimpleXMLElement("<" . $parentMessageName . "></" . $parentMessageName . ">");
 		
 		while(strlen($hexMessage) > 0) {
 			$messageType = hexdec(substr($hexMessage, 0, 2));
@@ -394,18 +450,36 @@ class WHDDAM6000 extends IPSModule {
 			$hexValue = substr($hexMessage, 6, $length * 2);
 			
 			if ($messageType == 127) { // constructed type
-				$value = $this->DecodeDamMessage($hexValue);
+				$messageXml = $this->DecodeDamMessage($hexValue, $messageName);
+				if ($xml === NULL) $xml = $messageXml;
+				else $this->xml_adopt($xml, $messageXml);
 			} else if ($messageType == 95) { // primitive type
 				$value = $this->DecodeDamMessageValue($hexValue, $messageId);
+				$xml->addChild($messageName, $value);
 			} else {
-				echo "ERROR";
+				IPS_LogMessage('WHD DAM 6000', 'Error occurred during message decoding!');
 			}
-			
-			array_push($message, Array($messageName =>$value));
 			
 			$hexMessage = substr($hexMessage, 6 + (2 * $length));
 		}
-		return $message;
+		return $xml;
+	}
+
+	private function xml_adopt($root, $new, $namespace = null) {
+		// first add the new node
+		$node = $root->addChild($new->getName(), (string) $new, $namespace);
+		
+		// add any attributes for the new node
+		foreach($new->attributes() as $attr => $value)
+			$node->addAttribute($attr, $value);
+
+		// get all namespaces, include a blank one
+		$namespaces = array_merge(array(null), $new->getNameSpaces(true));
+		
+		// add any child nodes, including optional namespace
+		foreach($namespaces as $space)
+			foreach ($new->children($space) as $child)
+				$this->xml_adopt($node, $child, $space);
 	}
 
 	private function RegisterProfileInteger($name, $icon, $prefix, $suffix, $minValue, $maxValue, $stepSize) {
