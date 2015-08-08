@@ -1,0 +1,11 @@
+{
+	"id" : "{88E92C54-2104-49C2-8EF1-6BA37B5A1279}",
+	"name" : "Sonos Gateway",
+	"type" : 2,
+	"vendor" : "Sonos",
+	"aliases" : ["Sonos Gateway"],
+	"parentRequirements" : [],
+	"childRequirements" : [],
+	"implemented" : [],
+	"prefix" : "SonosGW"
+}
