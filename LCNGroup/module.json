@@ -1,9 +1,9 @@
 {
 	"id" : "{5FE1290F-5FB4-4FEB-8276-42D196D0686C}",
-	"name" : "LCN Group",
+	"name" : "LCNGroup",
 	"type" : 3,
 	"vendor" : "LCN",
-	"aliases" : [],
+	"aliases" : ["LCN Group"],
 	"parentRequirements" : ["{C5755489-1880-4968-9894-F8028FE1020A}"],
 	"childRequirements" : [],
 	"implemented" : [],

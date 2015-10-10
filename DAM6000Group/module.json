@@ -1,9 +1,9 @@
 {
 	"id" : "{1D8ACAA5-1587-4BF5-A624-CD3351D89A0D}",
-	"name" : "WHD DAM 6000 Group",
+	"name" : "WHDDAM6000Group",
 	"type" : 3,
 	"vendor" : "WHD",
-	"aliases" : [],
+	"aliases" : ["WHD DAM 6000 Group"],
 	"parentRequirements" : ["{31D661FC-4C47-42B2-AD7E-0D87064D780A}"],
 	"childRequirements" : [],
 	"implemented" : ["{60D2151B-5D26-4B4F-8C98-A6CD451846D0}"],
