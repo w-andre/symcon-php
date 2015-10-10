@@ -47,46 +47,28 @@ class LCNGroup extends IPSModule {
 		// update variables for current configuration
 		switch ($unit) {
 			case 0: // output
-				$this->CustomMaintainVariable("Status", "Status", 0, "~Switch", 10, true);
+				$this->MaintainVariable("Status", "Status", 0, "~Switch", 10, true);
 				$this->EnableAction("Status");
-				$this->CustomMaintainVariable("Intensity", "Intensity", 1, "~Intensity.100", 20, true);
+				$this->MaintainVariable("Intensity", "Intensity", 1, "~Intensity.100", 20, true);
 				$this->EnableAction("Intensity");
-				$this->CustomMaintainVariable("LightScene", "LightScene", 1, "LightScene.LCN", 10, false);
-				$this->CustomMaintainVariable("LoadSaveLSSwitch", "Save Light Scene", 0, "LoadSaveLSSwitch.LCN", 20, false);
+				$this->MaintainVariable("LightScene", "LightScene", 1, "LightScene.LCN", 10, false);
+				$this->MaintainVariable("LoadSaveLSSwitch", "Save Light Scene", 0, "LoadSaveLSSwitch.LCN", 20, false);
 				break;
 			case 2: // relay
-				$this->CustomMaintainVariable("Status", "Status", 0, "~Switch", 10, true);
+				$this->MaintainVariable("Status", "Status", 0, "~Switch", 10, true);
 				$this->EnableAction("Status");
-				$this->CustomMaintainVariable("Intensity", "Intensity", 1, "~Intensity.100", 20, false);
-				$this->CustomMaintainVariable("LightScene", "Light Scene", 1, "LightScene.LCN", 10, false);
-				$this->CustomMaintainVariable("LoadSaveLSSwitch", "Save Light Scene", 0, "LoadSaveLSSwitch.LCN", 20, false);
+				$this->MaintainVariable("Intensity", "Intensity", 1, "~Intensity.100", 20, false);
+				$this->MaintainVariable("LightScene", "Light Scene", 1, "LightScene.LCN", 10, false);
+				$this->MaintainVariable("LoadSaveLSSwitch", "Save Light Scene", 0, "LoadSaveLSSwitch.LCN", 20, false);
 				break;
 			case 4: // light scene
-				$this->CustomMaintainVariable("Status", "Status", 0, "~Switch", 10, false);
-				$this->CustomMaintainVariable("Intensity", "Intensity", 1, "~Intensity.100", 20, false);
-				$this->CustomMaintainVariable("LightScene", "Lichtszene", 1, "LightScene.LCN", 10, true);
+				$this->MaintainVariable("Status", "Status", 0, "~Switch", 10, false);
+				$this->MaintainVariable("Intensity", "Intensity", 1, "~Intensity.100", 20, false);
+				$this->MaintainVariable("LightScene", "Lichtszene", 1, "LightScene.LCN", 10, true);
 				$this->EnableAction("LightScene");
-				$this->CustomMaintainVariable("LoadSaveLSSwitch", "Speichern", 0, "LoadSaveLSSwitch.LCN", 20, true);
+				$this->MaintainVariable("LoadSaveLSSwitch", "Speichern", 0, "LoadSaveLSSwitch.LCN", 20, true);
 				$this->EnableAction("LoadSaveLSSwitch");
 				break;
-		}
-	}
-
-	private function CustomMaintainVariable($ident, $name, $type, $profile, $position, $keep) {
-		if ($keep) {
-			switch ($type) {
-				case 0:
-					$this->RegisterVariableBoolean($ident, $name, $profile, $position);
-					break;
-				case 1:
-					$this->RegisterVariableInteger($ident, $name, $profile, $position);
-					break;
-			}
-		} else {
-			$vid = @IPS_GetObjectIDByIdent($ident, $this->InstanceID);
-			if (!is_int($vid) || !IPS_VariableExists($vid))
-				return; //bail out
-			IPS_DeleteVariable($vid);
 		}
 	}
 
@@ -118,7 +100,7 @@ class LCNGroup extends IPSModule {
 		LCN specific functions
 	 */
 
-	public function LoadLightScene($sceneNo) {
+	public function LoadLightScene(integer $sceneNo) {
 		$segment = $this->ReadPropertyInteger("Segment");
 		$target = $this->ReadPropertyInteger("Group");
 		$ramp = $this->ReadPropertyInteger("Ramp");
@@ -128,7 +110,7 @@ class LCNGroup extends IPSModule {
 		$this->LoadOrSaveLightScene(1, $segment, $target, $sceneNo, "0", "11111111", "A"); // all relays
 	}
 
-	public function SaveLightScene($sceneNo) {
+	public function SaveLightScene(integer $sceneNo) {
 		$segment = $this->ReadPropertyInteger("Segment");
 		$target = $this->ReadPropertyInteger("Group");
 		$ramp = $this->ReadPropertyInteger("Ramp");
@@ -137,17 +119,17 @@ class LCNGroup extends IPSModule {
 		$this->LoadOrSaveLightScene(1, $segment, $target, $sceneNo, "7", $rr, "S"); // all outputs (relays are always saved)
 	}
 
-	public function SetIntensity($intensity) {
+	public function SetIntensity(integer $intensity) {
 		$outputNo = $this->ReadPropertyInteger("Channel");
 		$this->SetSpecificOutputIntensity($outputNo, $intensity);
 	}
 
-	public function SetSpecificOutputIntensity($outputNo, $intensity) {
+	public function SetSpecificOutputIntensity(integer $outputNo, integer $intensity) {
 		$ramp = $this->ReadPropertyInteger("Ramp");
 		$this->SetSpecificOutputIntensityWithRamp($outputNo, $intensity, $ramp);
 	}
 
-	public function SetSpecificOutputIntensityWithRamp($outputNo, $intensity, $rampInSeconds) {
+	public function SetSpecificOutputIntensityWithRamp(integer $outputNo, integer $intensity, float $rampInSeconds) {
 		$segment = $this->ReadPropertyInteger("Segment");
 		$target = $this->ReadPropertyInteger("Group");
 		$rr = $this->GetRampFromSeconds($rampInSeconds);
@@ -168,12 +150,12 @@ class LCNGroup extends IPSModule {
 		$this->SendLcnPckCommand(1, $segment, $target, "A", $data);
 	}
 
-	public function SwitchRelay($switchOn) {
+	public function SwitchRelay(boolean $switchOn) {
 		$relayNo = $this->ReadPropertyInteger("Channel");
 		$this->SwitchSpecificRelay($relayNo, $switchOn);
 	}
 
-	public function SwitchSpecificRelay($relayNo, $switchOn) {
+	public function SwitchSpecificRelay(integer $relayNo, boolean $switchOn) {
 		$segment = $this->ReadPropertyInteger("Segment");
 		$target = $this->ReadPropertyInteger("Group");
 		$relay = $this->ReadPropertyInteger("Channel");
@@ -186,7 +168,7 @@ class LCNGroup extends IPSModule {
 		$this->SendLcnPckCommand(1, $segment, $target, "R8", $data);
 	}
 
-	public function LoadOrSaveLightScene($address, $segment, $target, $sceneNo, $channels, $rr, $loadOrSave) {
+	public function LoadOrSaveLightScene(integer $address, integer $segment, integer $target, integer $sceneNo, integer $channels, integer $rr, boolean $loadOrSave) {
 		$data = $loadOrSave											// A=load, S=save
 			. $channels												// 1=output 1, 2=output 2, 4=output 3, 0=relay (outputs are added together, 5=A1+A3, 7=all)
 			. str_pad(strval($sceneNo - 1), 3, "0", STR_PAD_LEFT)	// light scene 00 - 09, 15: take value from counter

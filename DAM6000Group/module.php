@@ -24,7 +24,7 @@ class WHDDAM6000Group extends IPSModule {
 		$this->EnableAction('Source');
 	}
 
-	public function SetVolume($volume) {
+	public function SetVolume(integer $volume) {
 		$group = $this->ReadPropertyInteger('Group');
 		
 		$this->SendDataToParent(json_encode(Array(
@@ -35,7 +35,7 @@ class WHDDAM6000Group extends IPSModule {
 		)));
 	}
 
-	public function SetStatus($status) {
+	public function SetStatus(boolean $status) {
 		$group = $this->ReadPropertyInteger('Group');
 		
 		$this->SendDataToParent(json_encode(Array(
@@ -46,7 +46,7 @@ class WHDDAM6000Group extends IPSModule {
 		)));
 	}
 
-	public function SetSource($sourceId) {
+	public function SetSource(integer $sourceId) {
 		$group = $this->ReadPropertyInteger('Group');
 		
 		$this->SendDataToParent(json_encode(Array(

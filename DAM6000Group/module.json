@@ -1,11 +1,11 @@
 {
 	"id" : "{1D8ACAA5-1587-4BF5-A624-CD3351D89A0D}",
-	"name" : "WHDDAM6000Group",
+	"name" : "WHD DAM 6000 Group",
 	"type" : 3,
 	"vendor" : "WHD",
-	"aliases" : ["WHD DAM 6000 Group"],
-	"parentRequirements" : ["{92B68DFF-49BA-470B-8200-5FF809E88ED0}"],
+	"aliases" : [],
+	"parentRequirements" : ["{31D661FC-4C47-42B2-AD7E-0D87064D780A}"],
 	"childRequirements" : [],
-	"implemented" : [],
+	"implemented" : ["{60D2151B-5D26-4B4F-8C98-A6CD451846D0}"],
 	"prefix" : "WHDDAMGroup"
 }
