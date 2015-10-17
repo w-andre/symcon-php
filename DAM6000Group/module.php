@@ -79,15 +79,15 @@ class WHDDAM6000Group extends IPSModule {
 		switch ($ident) {
 			case 'Status':
 				SetValueBoolean($this->GetIDForIdent($ident), $value);
-				$this->SetStatus($value);
+				$this->SetGroupStatus($value);
 				break;
 			case 'Volume':
 				SetValueInteger($this->GetIDForIdent($ident), $value);
-				$this->SetVolume($value);
+				$this->SetGroupVolume($value);
 				break;
 			case 'Source':
 				SetValueInteger($this->GetIDForIdent($ident), $value);
-				$this->SetSource($value);
+				$this->SetGroupSource($value);
 				break;
 			default:
 				throw new Exception('Invalid ident');
