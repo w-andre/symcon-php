@@ -138,6 +138,7 @@ class HomeKitAccessory extends IPSModule {
 		$variableId = $this->ReadPropertyInteger("PowerStateVariableId");
 		$value = $this->GetHomeKitValue($variableId, "PowerState");
 		SetValueBoolean($this->GetIDForIdent("PowerState"), $value);
+		return $value;
 	}
 
 	/*
@@ -175,6 +176,7 @@ class HomeKitAccessory extends IPSModule {
 			$value =  $this->GetHomeKitValue($variableId, "PowerState") ? 100 : 0;
 		}
 		SetValueInteger($this->GetIDForIdent("Brightness"), $value);
+		return $value;
 	}
 
 	/*
@@ -193,6 +195,7 @@ class HomeKitAccessory extends IPSModule {
 		$variableId = $this->ReadPropertyInteger("TargetTemperatureVariableId");
 		$value = $this->GetHomeKitValue($variableId, "TargetTemperature");
 		SetValueFloat($this->GetIDForIdent("TargetTemperature"), $value);
+		return $value;
 	}
 
 	public function GetCurrentTemperature() {
@@ -200,6 +203,7 @@ class HomeKitAccessory extends IPSModule {
 		$variableId = $this->ReadPropertyInteger("CurrentTemperatureVariableId");
 		$value = $this->GetHomeKitValue($variableId, "CurrentTemperature");
 		SetValueFloat($this->GetIDForIdent("CurrentTemperature"), $value);
+		return $value;
 	}
 
 	/*
@@ -218,6 +222,7 @@ class HomeKitAccessory extends IPSModule {
 		$variableId = $this->ReadPropertyInteger("TargetDoorStateVariableId");
 		$value = $this->GetHomeKitValue($variableId, "TargetDoorState");
 		SetValueInteger($this->GetIDForIdent("TargetDoorState"), $value);
+		return $value;
 	}
 
 	public function GetCurrentDoorState() {
@@ -225,6 +230,7 @@ class HomeKitAccessory extends IPSModule {
 		$variableId = $this->ReadPropertyInteger("CurrentDoorStateVariableId");
 		$value = $this->GetHomeKitValue($variableId, "CurrentDoorState");
 		SetValueInteger($this->GetIDForIdent("CurrentDoorState"), $value);
+		return $value;
 	}
 
 	/*
@@ -243,6 +249,7 @@ class HomeKitAccessory extends IPSModule {
 		$variableId = $this->ReadPropertyInteger("TargetLockMechanismStateVariableId");
 		$value = $this->GetHomeKitValue($variableId, "TargetLockMechanismState");
 		SetValueInteger($this->GetIDForIdent("TargetLockMechanismState"), $value);
+		return $value;
 	}
 
 	public function GetCurrentLockMechanismState() {
@@ -250,6 +257,7 @@ class HomeKitAccessory extends IPSModule {
 		$variableId = $this->ReadPropertyInteger("CurrentLockMechanismStateVariableId");
 		$value = $this->GetHomeKitValue($variableId, "CurrentLockMechanismState");
 		SetValueInteger($this->GetIDForIdent("CurrentLockMechanismState"), $value);
+		return $value;
 	}
 
 	/*
