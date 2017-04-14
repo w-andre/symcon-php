@@ -1,0 +1,15 @@
+{
+	"id": "{827D4815-1989-480B-A7E6-ACA7853F00D3}",
+	"name": "LCNKeys",
+	"type": 3,
+	"vendor": "LCN",
+	"aliases": [
+		"LCN Keys"
+	],
+	"parentRequirements": [
+		"{C5755489-1880-4968-9894-F8028FE1020A}"
+	],
+	"childRequirements": [],
+	"implemented": [],
+	"prefix": "LCNKEYS"
+}

@@ -1,0 +1,182 @@
+{
+	"elements": [
+		{
+			"type": "SelectInstance",
+			"name": "Module",
+			"caption": "Module"
+		},
+		{
+			"type": "List",
+			"name": "KeyTableA",
+			"caption": "Key table A",
+			"rowCount": 8,
+			"add": false,
+			"delete": false,
+			"sort": {
+				"column": "keyName",
+				"direction": "ascending"
+			},
+			"columns": [
+				{
+					"label": "Key",
+					"name": "keyName",
+					"width": "auto"
+				},
+				{
+					"label": "Hit",
+					"name": "hit",
+					"width": "75px",
+					"edit": {
+						"type": "SelectScript"
+					}
+				},
+				{
+					"label": "Make",
+					"name": "make",
+					"width": "75px",
+					"edit": {
+						"type": "SelectScript"
+					}
+				},
+				{
+					"label": "Break",
+					"name": "break",
+					"width": "75px",
+					"edit": {
+						"type": "SelectScript"
+					}
+				}
+			]
+		},
+		{
+			"type": "List",
+			"name": "KeyTableB",
+			"caption": "Key table B",
+			"rowCount": 8,
+			"add": false,
+			"delete": false,
+			"sort": {
+				"column": "keyName",
+				"direction": "ascending"
+			},
+			"columns": [
+				{
+					"label": "Key",
+					"name": "keyName",
+					"width": "auto"
+				},
+				{
+					"label": "Hit",
+					"name": "hit",
+					"width": "75px",
+					"edit": {
+						"type": "SelectScript"
+					}
+				},
+				{
+					"label": "Make",
+					"name": "make",
+					"width": "75px",
+					"edit": {
+						"type": "SelectScript"
+					}
+				},
+				{
+					"label": "Break",
+					"name": "break",
+					"width": "75px",
+					"edit": {
+						"type": "SelectScript"
+					}
+				}
+			]
+		},
+		{
+			"type": "List",
+			"name": "KeyTableC",
+			"caption": "Key table C",
+			"rowCount": 8,
+			"add": false,
+			"delete": false,
+			"sort": {
+				"column": "keyName",
+				"direction": "ascending"
+			},
+			"columns": [
+				{
+					"label": "Key",
+					"name": "keyName",
+					"width": "auto"
+				},
+				{
+					"label": "Hit",
+					"name": "hit",
+					"width": "75px",
+					"edit": {
+						"type": "SelectScript"
+					}
+				},
+				{
+					"label": "Make",
+					"name": "make",
+					"width": "75px",
+					"edit": {
+						"type": "SelectScript"
+					}
+				},
+				{
+					"label": "Break",
+					"name": "break",
+					"width": "75px",
+					"edit": {
+						"type": "SelectScript"
+					}
+				}
+			]
+		},
+		{
+			"type": "List",
+			"name": "KeyTableD",
+			"caption": "Key table D",
+			"rowCount": 8,
+			"add": false,
+			"delete": false,
+			"sort": {
+				"column": "keyName",
+				"direction": "ascending"
+			},
+			"columns": [
+				{
+					"label": "Key",
+					"name": "keyName",
+					"width": "auto"
+				},
+				{
+					"label": "Hit",
+					"name": "hit",
+					"width": "75px",
+					"edit": {
+						"type": "SelectScript"
+					}
+				},
+				{
+					"label": "Make",
+					"name": "make",
+					"width": "75px",
+					"edit": {
+						"type": "SelectScript"
+					}
+				},
+				{
+					"label": "Break",
+					"name": "break",
+					"width": "75px",
+					"edit": {
+						"type": "SelectScript"
+					}
+				}
+			]
+		}
+	],
+	"actions": []
+}

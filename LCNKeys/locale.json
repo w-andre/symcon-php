@@ -1,0 +1,15 @@
+{
+    "translations": {
+        "de": {
+            "Module": "Modul",
+            "Key table A": "Tasten-Tabelle A",
+            "Key table B": "Tasten-Tabelle B",
+            "Key table C": "Tasten-Tabelle C",
+            "Key table D": "Tasten-Tabelle D",
+            "Key": "Taste",
+            "Hit": "Kurz",
+            "Make": "Lang",
+            "Break": "Los"
+        }
+    }
+}
