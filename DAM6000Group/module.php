@@ -27,34 +27,43 @@ class WHDDAM6000Group extends IPSModule {
 	public function SetGroupVolume(integer $volume) {
 		$group = $this->ReadPropertyInteger('Group');
 		
-		$this->SendDataToParent(json_encode(Array(
+		$jsonString = json_encode(Array(
 			"DataID" => "{31D661FC-4C47-42B2-AD7E-0D87064D780A}",
 			"Group" => $group,
 			"ValueType" => "Volume",
 			"Value" => $volume
-		)));
+		));
+		$this->SendDebug("SetGroupVolume", $jsonString, 0);
+		
+		$this->SendDataToParent($jsonString);
 	}
 
 	public function SetGroupStatus(boolean $status) {
 		$group = $this->ReadPropertyInteger('Group');
-		
-		$this->SendDataToParent(json_encode(Array(
+
+		$jsonString = json_encode(Array(
 			"DataID" => "{31D661FC-4C47-42B2-AD7E-0D87064D780A}",
 			"Group" => $group,
 			"ValueType" => "Mute",
 			"Value" => $status == 0
-		)));
+		));
+		$this->SendDebug("SetGroupStatus", $jsonString, 0);
+		
+		$this->SendDataToParent($jsonString);
 	}
 
 	public function SetGroupSource(integer $sourceId) {
 		$group = $this->ReadPropertyInteger('Group');
 		
-		$this->SendDataToParent(json_encode(Array(
+		$jsonString = json_encode(Array(
 			"DataID" => "{31D661FC-4C47-42B2-AD7E-0D87064D780A}",
 			"Group" => $group,
 			"ValueType" => "Source",
 			"Value" => $sourceId
-		)));
+		));
+		$this->SendDebug("SetGroupSource", $jsonString, 0);
+		
+		$this->SendDataToParent($jsonString);
 	}
 
 	// receive data from parent --> update status

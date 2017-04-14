@@ -6,8 +6,6 @@ class WHDDAM6000 extends IPSModule {
 		parent::Create();
 		
 		$this->RegisterPropertyString("Host", "");
-		$this->RegisterPropertyString("MessageBuffer", "");
-		$this->RegisterPropertyInteger("MessageLength", -1);
 	}
 
 	public function ApplyChanges() {
@@ -28,8 +26,8 @@ class WHDDAM6000 extends IPSModule {
 	}
 
 	public function ResetMessageBuffer() {
-		$this->WriteProperty("MessageBuffer", "");
-		$this->WriteProperty("MessageLength", -1);
+		$this->SetBuffer("MessageBuffer", "");
+		$this->SetBuffer("MessageLength", "-1");
 	}
 
 	private function WriteProperty($name, $value) {	
@@ -72,8 +70,8 @@ class WHDDAM6000 extends IPSModule {
 		
 		switch($response->DataID) {
 			case "{018EF6B5-AB94-40C6-AA53-46943E824ACF}": // Client Socket --> WHD response
-				$messageBuffer = $this->ReadPropertyString("MessageBuffer");
-				$messageLength = $this->ReadPropertyInteger("MessageLength");
+				$messageBuffer = $this->GetBuffer("MessageBuffer");
+				$messageLength = intval($this->GetBuffer("MessageLength"));
 						
 				$hexMessage = bin2hex(utf8_decode($response->Buffer));
 				$messageBuffer .= $hexMessage;
@@ -82,12 +80,11 @@ class WHDDAM6000 extends IPSModule {
 					$messageLength = hexdec(substr($hexMessage, 4, 2));
 				
 				if (strlen($messageBuffer) !== 6 + $messageLength * 2) {
-					$this->WriteProperty("MessageBuffer", $messageBuffer);
-					$this->WriteProperty("MessageLength", $messageLength);
+					$this->SetBuffer("MessageBuffer", $messageBuffer);
+					$this->SetBuffer("MessageLength", strval($messageLength));
 				} else {
 					$this->ResetMessageBuffer();
 					$message = $this->DecodeDamMessage($messageBuffer);
-					
 					$this->ProcessResponse($message);
 				}
 				break;
@@ -124,7 +121,7 @@ class WHDDAM6000 extends IPSModule {
 				$this->SendDataToChildren(json_encode($groupInfo));
 				break;
 			default:
-				IPS_LogMessage('WHD DAM 6000', ($message->asXML()));
+				IPS_LogMessage('WHD DAM 6000', ($message->asXml()));
 				break;
 		}
 	}
@@ -462,6 +459,8 @@ class WHDDAM6000 extends IPSModule {
 			
 			$hexMessage = substr($hexMessage, 6 + (2 * $length));
 		}
+
+		$this->SendDebug("Decode DAM message result", $xml->asXml(), 0);
 		return $xml;
 	}
 
