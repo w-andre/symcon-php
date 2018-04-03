@@ -22,7 +22,7 @@ class LCNGroup extends IPSModule {
 
 		// register variable profile for light scenes
 		// do not overwrite existing associations (allow renaming light scenes)
-		$this->RegisterProfileEx("LightScene.LCN", "Bulb", "", "", 1 /* Integer */, Array(
+		$this->RegisterProfileEx("LightScene.LCN", "Bulb", "", "", 1 /* int */, Array(
 			Array(1, "Light Scene 1", "", -1),
 			Array(2, "Light Scene 2", "", -1),
 			Array(3, "Light Scene 3", "", -1),
@@ -100,7 +100,7 @@ class LCNGroup extends IPSModule {
 		LCN specific functions
 	 */
 
-	public function LoadLightScene(integer $sceneNo) {
+	public function LoadLightScene(int $sceneNo) {
 		$segment = $this->ReadPropertyInteger("Segment");
 		$target = $this->ReadPropertyInteger("Group");
 		$ramp = $this->ReadPropertyInteger("Ramp");
@@ -110,7 +110,7 @@ class LCNGroup extends IPSModule {
 		$this->LoadOrSaveLightScene(1, $segment, $target, $sceneNo, "0", "11111111", "A"); // all relays
 	}
 
-	public function SaveLightScene(integer $sceneNo) {
+	public function SaveLightScene(int $sceneNo) {
 		$segment = $this->ReadPropertyInteger("Segment");
 		$target = $this->ReadPropertyInteger("Group");
 		$ramp = $this->ReadPropertyInteger("Ramp");
@@ -119,17 +119,17 @@ class LCNGroup extends IPSModule {
 		$this->LoadOrSaveLightScene(1, $segment, $target, $sceneNo, "7", $rr, "S"); // all outputs (relays are always saved)
 	}
 
-	public function SetIntensity(integer $intensity) {
+	public function SetIntensity(int $intensity) {
 		$outputNo = $this->ReadPropertyInteger("Channel");
 		$this->SetSpecificOutputIntensity($outputNo, $intensity);
 	}
 
-	public function SetSpecificOutputIntensity(integer $outputNo, integer $intensity) {
+	public function SetSpecificOutputIntensity(int $outputNo, int $intensity) {
 		$ramp = $this->ReadPropertyInteger("Ramp");
 		$this->SetSpecificOutputIntensityWithRamp($outputNo, $intensity, $ramp);
 	}
 
-	public function SetSpecificOutputIntensityWithRamp(integer $outputNo, integer $intensity, float $rampInSeconds) {
+	public function SetSpecificOutputIntensityWithRamp(int $outputNo, int $intensity, float $rampInSeconds) {
 		$segment = $this->ReadPropertyInteger("Segment");
 		$target = $this->ReadPropertyInteger("Group");
 		$rr = $this->GetRampFromSeconds($rampInSeconds);
@@ -150,12 +150,12 @@ class LCNGroup extends IPSModule {
 		$this->SendLcnPckCommand(1, $segment, $target, "A", $data);
 	}
 
-	public function SwitchRelay(boolean $switchOn) {
+	public function SwitchRelay(bool $switchOn) {
 		$relayNo = $this->ReadPropertyInteger("Channel");
 		$this->SwitchSpecificRelay($relayNo, $switchOn);
 	}
 
-	public function SwitchSpecificRelay(integer $relayNo, boolean $switchOn) {
+	public function SwitchSpecificRelay(int $relayNo, bool $switchOn) {
 		$segment = $this->ReadPropertyInteger("Segment");
 		$target = $this->ReadPropertyInteger("Group");
 		$relay = $this->ReadPropertyInteger("Channel");
@@ -168,7 +168,7 @@ class LCNGroup extends IPSModule {
 		$this->SendLcnPckCommand(1, $segment, $target, "R8", $data);
 	}
 
-	public function LoadOrSaveLightScene(integer $address, integer $segment, integer $target, integer $sceneNo, integer $channels, integer $rr, boolean $loadOrSave) {
+	public function LoadOrSaveLightScene(int $address, int $segment, int $target, int $sceneNo, int $channels, int $rr, bool $loadOrSave) {
 		$data = $loadOrSave											// A=load, S=save
 			. $channels												// 1=output 1, 2=output 2, 4=output 3, 0=relay (outputs are added together, 5=A1+A3, 7=all)
 			. str_pad(strval($sceneNo - 1), 3, "0", STR_PAD_LEFT)	// light scene 00 - 09, 15: take value from counter
