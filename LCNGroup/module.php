@@ -168,7 +168,7 @@ class LCNGroup extends IPSModule {
 		$this->SendLcnPckCommand(1, $segment, $target, "R8", $data);
 	}
 
-	public function LoadOrSaveLightScene(int $address, int $segment, int $target, int $sceneNo, int $channels, int $rr, bool $loadOrSave) {
+	public function LoadOrSaveLightScene(int $address, int $segment, int $target, int $sceneNo, int $channels, int $rr, string $loadOrSave) {
 		$data = $loadOrSave											// A=load, S=save
 			. $channels												// 1=output 1, 2=output 2, 4=output 3, 0=relay (outputs are added together, 5=A1+A3, 7=all)
 			. str_pad(strval($sceneNo - 1), 3, "0", STR_PAD_LEFT)	// light scene 00 - 09, 15: take value from counter
@@ -224,14 +224,16 @@ class LCNGroup extends IPSModule {
 		@param	string	$data		PCK function data, e.g. "A700007" to load light scene 1 for all outputs with a ramp of 3s
 	*/
 	private function SendLcnPckCommand($address, $segment, $target, $function, $data) {
-		$this->SendDataToParent(json_encode(Array(
+        $jsonData = json_encode(Array(
 			"DataID"	=> "{C5755489-1880-4968-9894-F8028FE1020A}",
 			"Address"	=> $address,
 			"Segment"	=> $segment,
 			"Target"	=> $target,
 			"Function"	=> $function,
 			"Data"		=> $data)
-		));
+		);
+        IPS_LogMessage("SendLcnPckCommand", $jsonData);
+		$this->SendDataToParent($jsonData);
 	}
 
 	private static function GetRampFromSeconds($seconds) {
